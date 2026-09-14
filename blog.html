@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Flavio De Carolis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="container">
+    <a class="brand" href="index.html">Flavio De Carolis<em>International Finance · Geneva</em></a>
+    <ul>
+      <li><a class="navlink" href="index.html">Home</a></li>
+      <li><a class="navlink" href="cv.html">CV</a></li>
+      <li><a class="navlink" href="interests.html">Research</a></li>
+      <li><a class="navlink" href="beyond.html">Beyond PhD</a></li>
+      <li><a class="navlink" href="blog.html" aria-current="page">Blog</a></li>
+    </ul>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <section style="margin-bottom:36px;">
+      <h1 style="font-size:1.8rem; margin-bottom:12px;">Blog</h1>
+      <p class="lede">Shorter notes and commentary — on climate and geopolitical risk in markets, working
+        papers as they develop, and things from conferences worth writing down.</p>
+    </section>
+
+    <section>
+      <div id="post-list"></div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <span>© 2026 Flavio De Carolis</span>
+    <span><a href="mailto:flavio.decarolis@unige.ch">flavio.decarolis@unige.ch</a></span>
+  </div>
+</footer>
+
+<script>
+  /* ---------------------------------------------------------------
+     Add posts here. Each entry:
+       { title: "...", date: "2026-03-01", excerpt: "...", url: "post-slug.html" }
+     - "date" is ISO (YYYY-MM-DD), shown formatted automatically.
+     - "url" is optional: point it at a page you write for the full post
+       (e.g. copy blog.html's <head>/nav/footer around your text) and
+       list posts newest first. Leave "url" out for a draft placeholder
+       that isn't clickable yet.
+     --------------------------------------------------------------- */
+  const posts = [
+    // { title: "Example post title", date: "2026-01-01", excerpt: "One or two sentences previewing the post.", url: "example-post.html" },
+  ];
+
+  const list = document.getElementById('post-list');
+
+  function formatDate(iso) {
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  if (posts.length === 0) {
+    list.innerHTML = `
+      <div class="empty-row">
+        <strong>No entries yet</strong>
+        First post is coming soon — check back, or get in touch if there's something you'd like me to write about.
+      </div>`;
+  } else {
+    posts
+      .slice()
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .forEach(post => {
+        const tag = post.url ? 'a' : 'div';
+        const row = document.createElement(tag);
+        row.className = 'post-row';
+        if (post.url) row.href = post.url;
+        row.innerHTML = `
+          <div class="post-date">${formatDate(post.date)}</div>
+          <h3>${post.title}</h3>
+          <p class="excerpt">${post.excerpt}</p>`;
+        list.appendChild(row);
+      });
+  }
+</script>
+
+</body>
+</html>
