@@ -36,6 +36,35 @@
       <div id="post-list"></div>
     </section>
 
+    <section class="applied">
+      <div class="eyebrow">Contact the Author</div>
+      <p style="color:var(--ink-dim); font-size:.95rem; max-width:60ch; margin-bottom:22px;">
+        Feedback on a post, a correction, or something you'd like me to write about — a message here goes
+        straight to my inbox.
+      </p>
+      <form class="contact-form" action="https://formsubmit.co/flavio.decarolis@unige.ch" method="POST">
+        <input type="hidden" name="_subject" value="New message from your website blog">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_next" value="https://flaviodecarolis.github.io/blog.html">
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+        <div class="form-row">
+          <label for="cf-name">Name</label>
+          <input type="text" id="cf-name" name="name" required>
+        </div>
+        <div class="form-row">
+          <label for="cf-email">Your email</label>
+          <input type="email" id="cf-email" name="email" required>
+        </div>
+        <div class="form-row">
+          <label for="cf-message">Message</label>
+          <textarea id="cf-message" name="message" rows="5" required></textarea>
+        </div>
+        <div>
+          <button type="submit" class="btn btn-primary">Send message</button>
+        </div>
+      </form>
+    </section>
+
   </div>
 </main>
 
