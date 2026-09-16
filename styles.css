@@ -387,35 +387,6 @@ section:last-child{ margin-bottom:0; }
 }
 .empty-row strong{ color:var(--ink); display:block; margin-bottom:4px; font-family:var(--font-serif); font-size:1.05rem; }
 
-/* ---------------- contact form ---------------- */
-
-.contact-form{ display:grid; gap:16px; max-width:520px; }
-.form-row{ display:grid; gap:6px; }
-.form-row label{
-  font-family:var(--font-mono);
-  font-size:.74rem;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  color:var(--ink-faint);
-}
-.form-row input,
-.form-row textarea{
-  background:var(--surface-2);
-  border:1px solid var(--border);
-  border-radius:4px;
-  padding:10px 12px;
-  color:var(--ink);
-  font-family:var(--font-sans);
-  font-size:.94rem;
-  resize:vertical;
-}
-.form-row input:focus,
-.form-row textarea:focus{
-  outline:none;
-  border-color:var(--accent);
-}
-.form-note{ color:var(--ink-faint); font-size:.82rem; margin-top:2px; }
-
 /* ---------------- footer ---------------- */
 
 footer{
