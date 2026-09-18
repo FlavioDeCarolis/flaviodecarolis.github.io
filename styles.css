@@ -387,6 +387,54 @@ section:last-child{ margin-bottom:0; }
 }
 .empty-row strong{ color:var(--ink); display:block; margin-bottom:4px; font-family:var(--font-serif); font-size:1.05rem; }
 
+/* ---------------- blog post body ---------------- */
+
+.post-body{
+  display:grid;
+  gap:20px;
+  max-width:68ch;
+  font-size:1.02rem;
+  line-height:1.75;
+  color:var(--ink);
+}
+.post-body strong{ color:var(--ink); }
+.post-body a{ color:var(--accent); }
+.post-kicker{
+  font-family:var(--font-serif);
+  font-style:italic;
+  color:var(--ink-dim);
+  font-size:1.08rem;
+  margin-bottom:22px;
+}
+.post-note{
+  color:var(--ink-faint);
+  font-size:.86rem;
+  font-style:italic;
+  max-width:68ch;
+  line-height:1.6;
+}
+.post-note + .post-note{ margin-top:14px; }
+
+.refs{
+  list-style:none;
+  margin:0; padding:0;
+  display:grid; gap:10px;
+  color:var(--ink-faint);
+  font-size:.84rem;
+  line-height:1.6;
+}
+.refs a{ color:var(--ink-dim); }
+.refs a:hover{ color:var(--accent); }
+.refs li{ scroll-margin-top:80px; }
+
+.post-body sup a{
+  color:var(--accent);
+  text-decoration:none;
+  font-size:.72em;
+  padding-left:1px;
+}
+.post-body sup a:hover{ text-decoration:underline; }
+
 /* ---------------- footer ---------------- */
 
 footer{
