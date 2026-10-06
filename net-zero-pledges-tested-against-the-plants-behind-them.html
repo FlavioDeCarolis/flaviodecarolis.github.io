@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Database That Checks What Net-Zero Pledges Don't Say — Flavio De Carolis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="container">
+    <a class="brand" href="index.html">Flavio De Carolis<em>International Finance · Geneva</em></a>
+    <ul>
+      <li><a class="navlink" href="index.html">Home</a></li>
+      <li><a class="navlink" href="cv.html">CV</a></li>
+      <li><a class="navlink" href="interests.html">Research</a></li>
+      <li><a class="navlink" href="teaching.html">Teaching</a></li>
+      <li><a class="navlink" href="beyond.html">Beyond PhD</a></li>
+      <li><a class="navlink" href="blog.html" aria-current="page">Blog</a></li>
+    </ul>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <section style="margin-bottom:8px;">
+      <div class="post-date">6 October 2026</div>
+      <h1 style="font-size:1.9rem; margin-top:10px;">A Database That Checks What Net-Zero Pledges Don't Say</h1>
+    </section>
+
+    <section>
+      <div class="post-body">
+        <p>
+          A net-zero pledge means little if investors cannot see what the company is actually building.
+          That risk is easier to check now, because a small team chose to spend years building the Global
+          Ethylene Production Database (GEPD) and making it publicly accessible.
+        </p>
+        <p>
+          In this post, I publish parts of an interview with Christophe Christiaen, Head of the Spatial
+          Finance Initiative at the Oxford Sustainable Finance Group and Smith School of Enterprise and the
+          Environment, on how investors can use the GEPD to test petrochemical companies against their
+          net-zero pledges. The database shows how much carbon is locked into the sector's committed
+          production, and how investors can use those numbers today to test a company's transition
+          credibility. Christophe was candid about what building the database took: uneasy collaboration
+          between social scientists and machine learning engineers learning to trust each other's work, and
+          a validation process he called fatiguing even with AI's help. As he put it, "everybody likes the
+          dataset, nobody wants to build it." He and his colleagues built the database anyway, and it will
+          live on through Global Energy Monitor's trackers. Thank you to Christophe for walking me through
+          the dataset in such detail.
+        </p>
+
+        <h3>Why the GEPD Matters, and the Connection to My Last Post</h3>
+        <p>
+          My previous post traced how a firm's location decides its exposure to shocks like the closure of
+          the Strait of Hormuz or a low Rhine.<sup><a href="#fn1" id="fnref1">1</a></sup> That post ended on
+          an admission: location data for individual firms is often missing. The same blind spot applies to
+          a harder question. Not just where a company operates, but what it is building there, and how much
+          carbon that plant locks in for decades.
+        </p>
+        <p>
+          The GEPD shows why the location gap matters. Ethylene production alone could consume more than
+          30% of the entire chemical sector's remaining carbon budget for staying under 1.5°C, starting
+          now.<sup><a href="#fn2" id="fnref2">2</a></sup> Reported emissions do not map cleanly onto what
+          companies actually produce, so forward-looking committed emissions come out higher than current
+          pledges suggest.
+        </p>
+        <p>
+          Christophe Christiaen and his co-authors built a new asset-level map to answer that question for
+          one industry: petrochemicals.<sup><a href="#fn2" id="fnref2b">2</a></sup> Their GEPD covers 342
+          facilities worldwide, plant by plant, owner by owner. The database tracks ethylene crackers, a
+          highly capital-intensive unit that turns oil and gas into the building block of most plastics.
+        </p>
+        <p>
+          Christophe told me this work is part of a
+          <a href="https://cgfi.ac.uk/spatial-finance-initiative/geoasset-project/geoasset-databases/" target="_blank" rel="noopener">multi-industry global mapping effort</a>
+          that has been running since 2020. Early attempts to
+          automate data collection produced limited results and still needed heavy manual checking. Even
+          two years ago, with the advent of large language models, AI-assisted extraction hallucinated
+          badly and still required significant manual validation. Only recently has that kind of automated
+          extraction become reliable enough to deploy at scale. Building the GEPD took years of iteration
+          and largely manual work, and the team has now partnered with the NGO Global Energy Monitor on a
+          <a href="https://globalenergymonitor.org/projects/global-chemicals-inventory" target="_blank" rel="noopener">Global Chemicals Inventory</a>
+          to keep the information up to date.
+        </p>
+
+        <h3>What the Data Can Test Today</h3>
+        <p>
+          I asked Christophe what an investor could do with the database. His answer was concrete: "If a
+          company owns a large ethylene asset, is it still economically viable to run it at current gas and
+          LNG prices? If a company claims transition credibility while continuing to invest in this kind of
+          asset, that claim can now be checked directly against the asset itself."
+        </p>
+        <p>
+          He named two further examples in the interview. On China, Christophe's point was narrower: "the
+          sector's current oversupply makes a company's Chinese ethylene exposure informative about its
+          competitiveness." The database itself shows the scale of that exposure: 17,200 kilotonnes of new
+          ethylene capacity already under construction in China, more than in any other
+          country.<sup><a href="#fn2" id="fnref2c">2</a></sup>
+        </p>
+        <p>
+          On the Middle East, Christophe pointed to how much current capacity sits there, tied to trade
+          routes through the Strait of Hormuz. The database's own figures show why that matters: Saudi
+          Arabia holds 8% of global ethylene capacity and Iran another 5%, much of it moved through or
+          around the strait, including the same pipeline I covered in my last
+          post.<sup><a href="#fn2" id="fnref2d">2</a></sup> Both risks, competitive and geopolitical, sit
+          inside the same asset-level data.
+        </p>
+
+        <h3>My View on the GEPD and What It Means for Practitioners</h3>
+        <p>
+          Use the GEPD's information on continued investment in a specific carbon-locking asset as a
+          direct, checkable challenge to a company's transition plan. Use the database to benchmark peers
+          within a sector: who is expanding into overcapacity, and who is aligned with what they have
+          pledged. Use its geographic data to assess physical, geopolitical and transition exposure
+          together. This generation of data is built for scrutiny and engagement with companies.
+        </p>
+        <p>
+          It is tempting to connect the database directly to portfolio construction methods, such as Bolton,
+          Kacperczyk and Samama's 2022 approach to building low-tracking-error portfolios against a carbon
+          budget.<sup><a href="#fn3" id="fnref3">3</a></sup> The database covers one product in one
+          industry, though, so it lacks the full cross-sector universe a portfolio-level carbon budget
+          needs. Broader, cross-sector coverage would be a useful feature for future databases.
+        </p>
+        <p><em>This post is analysis, not investment advice.</em></p>
+        <p>
+          <strong>What should I test the data on next?</strong> Tell me by DM on
+          <a href="https://www.linkedin.com/in/flavio-de-carolis/" target="_blank" rel="noopener">LinkedIn</a>.
+          It will help shape the next post.
+        </p>
+      </div>
+    </section>
+
+    <section class="applied" style="margin-bottom:40px;">
+      <p class="post-note">
+        Author's note: my research on physical climate risk, corporate resilience, and asset pricing —
+        including facility-level maps of firms' flood and storm exposure — is available on this site under
+        <a href="interests.html">Research</a> and <a href="beyond.html">Beyond the PhD</a>.
+      </p>
+    </section>
+
+    <section>
+      <div class="eyebrow">References</div>
+      <ol class="refs">
+        <li id="fn1">De Carolis, Flavio. 2026. "Hormuz, the Rhine, and the Price of Location." <a href="hormuz-the-rhine-and-the-price-of-location.html">Blog</a>, 18 September. <a href="#fnref1">↩</a></li>
+        <li id="fn2">Kampmann, D., Christiaen, C., Singh, A., Kushwaha, N., Jalihal, S., and Caldecott, B. "Global Ethylene Production Database: Assessing Committed Emissions from Current and Future Ethylene Production Capacity in the Global Petrochemical Industry." Smith School of Enterprise and the Environment, University of Oxford. <a href="#fnref2">↩</a></li>
+        <li id="fn3">Bolton, P., Kacperczyk, M., and Samama, F. 2022. "Net-Zero Carbon Portfolio Alignment." <em>Financial Analysts Journal</em> 78 (2): 19–33. <a href="#fnref3">↩</a></li>
+      </ol>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <span>© 2026 Flavio De Carolis</span>
+    <span><a href="mailto:flavio.decarolis@unige.ch">flavio.decarolis@unige.ch</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
