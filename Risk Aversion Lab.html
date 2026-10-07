@@ -1,0 +1,1039 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Risk Aversion Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
+<style>
+/* Layout: one column of two lecture sections; each pairs controls, two charts and a row of live readouts. */
+:root{
+  --bg:#f4f6f9;--surface:#ffffff;--soft:#edf1f6;--ink:#141a23;--muted:#586273;--line:#d9dfe7;--grid:#e8ecf1;
+  --accent:#1f3a5f;--accent-ink:#ffffff;
+  --cara:#2a78d6;--dara:#d9541f;--iara:#6250d6;--gold:#b07a00;--ok:#0b7a43;--bad:#b3311f;
+  --ia:#12936a;--ib:#d13f7d;
+  --display:'Newsreader',Georgia,'Times New Roman',serif;--sans:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1218;--surface:#161b23;--soft:#1e2530;--ink:#e9edf3;--muted:#a2acba;--line:#2b323d;--grid:#222933;
+    --accent:#8db4ea;--accent-ink:#0e1218;
+    --cara:#3987e5;--dara:#f0793f;--iara:#9085e9;--gold:#e0a020;--ok:#35c37d;--bad:#ee7b6d;--ia:#2dbb8a;--ib:#ea7aa6;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1218;--surface:#161b23;--soft:#1e2530;--ink:#e9edf3;--muted:#a2acba;--line:#2b323d;--grid:#222933;
+  --accent:#8db4ea;--accent-ink:#0e1218;
+  --cara:#3987e5;--dara:#f0793f;--iara:#9085e9;--gold:#e0a020;--ok:#35c37d;--bad:#ee7b6d;--ia:#2dbb8a;--ib:#ea7aa6;color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--sans);font-variant-numeric:tabular-nums;padding-inline:16px;padding-block:32px 64px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:56px}
+h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance;line-height:1.15}
+h1{font-size:clamp(32px,5vw,46px)}
+h2{font-size:clamp(24px,3.4vw,32px)}
+h3{font-size:18px}
+p{margin:0}
+.lede{color:var(--muted);max-width:68ch}
+.eyebrow{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+header{display:grid;gap:12px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+nav a{color:var(--ink);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:8px;font-weight:500}
+nav a:hover{border-color:var(--muted)}
+section{display:grid;gap:20px;min-width:0}
+.head{display:grid;gap:8px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;min-width:0;display:grid;gap:12px;align-content:start}
+.panel .sub{color:var(--muted);font-size:14px}
+.controls{display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center}
+.ctl{display:flex;align-items:center;gap:10px;flex:1 1 300px;min-width:0}
+.ctl label{color:var(--muted);font-size:14px;white-space:nowrap}
+.ctl input{flex:1;min-width:0;accent-color:var(--accent)}
+.ctl output{min-width:72px;text-align:right;font-weight:600}
+.controls>*{min-width:0}
+@media (max-width:560px){
+  .ctl{flex:1 1 100%;flex-wrap:wrap}
+  .ctl label{flex:1 1 100%;white-space:normal}
+  .ctl input{flex:1 1 0}
+}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--soft)}
+.seg button{font:inherit;font-weight:500;padding:8px 14px;border:0;background:transparent;color:var(--ink);cursor:pointer;min-height:40px}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.btn{font:inherit;font-weight:500;padding:8px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);cursor:pointer;min-height:40px}
+.btn:hover{border-color:var(--muted)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:var(--soft);border-radius:10px;padding:12px 14px;display:grid;gap:4px;align-content:start;min-width:0}
+.stat .k{font-size:12.5px;color:var(--muted)}
+.stat .v{font-size:22px;font-weight:600;line-height:1.2}
+.stat .v.sm{font-size:16px}
+.pill{display:inline-block;width:max-content;max-width:100%;white-space:normal;padding:2px 10px;border-radius:999px;font-size:12.5px;font-weight:600;border:1px solid currentColor}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.eq{color:var(--accent)}
+.chart{min-width:0}
+.chart svg{display:block;width:100%;overflow:visible}
+svg .ax{stroke:var(--line);stroke-width:1}
+svg .gr{stroke:var(--grid);stroke-width:1}
+svg .tk{fill:var(--muted);font:11.5px var(--sans)}
+svg .lb{font:600 12px var(--sans)}
+.key{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--muted)}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.fam{display:grid;gap:8px;align-content:start}
+.fam .t{display:flex;align-items:center;gap:10px}
+.fam .f{font-family:var(--display);font-size:17px}
+.fam .row{display:flex;gap:20px;flex-wrap:wrap}
+.fam .row div{display:grid}
+.fam .row b{font-size:20px;line-height:1.2}
+.fam .row small{color:var(--muted);font-size:12.5px}
+.notes{display:grid;gap:12px}
+.notes p{max-width:75ch}
+.notes strong{font-weight:600}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--line)}
+th{font-weight:600;color:var(--muted);font-size:12.5px}
+th:first-child,td:first-child{text-align:left}
+table.sm{min-width:0}
+caption{text-align:left;font-weight:600;padding:0 0 8px;color:var(--ink)}
+.stat.hl{outline:2px solid var(--cara);outline-offset:-2px}
+.stat.hl .v{color:var(--cara)}
+footer{color:var(--muted);font-size:13px;max-width:75ch}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Financial Economics · Problem Sets 3 and 4</div>
+  <h1>Risk Aversion Lab</h1>
+  <p class="lede">Move the sliders and watch what a fair gamble costs a risk-averse person. Problem Set 3: the first section answers Problem 1 (insurance or gamble), the second Problem 2 (does risk aversion fall, stay flat or rise as you get richer), the third Problem 3 (ranking risky investments without knowing the investor) and the fourth Problem 4 (why lower variance is not the same as second-order dominance). Problem Set 4: the fifth section moves from pricing a gamble to choosing how much of it to take, and shows which gap on the return line is the risk premium.</p>
+  <nav aria-label="Sections"><a href="#p1">PS3 Problem 1: insurance</a><a href="#p2">PS3 Problem 2: CARA, DARA, IARA</a><a href="#p3">PS3 Problem 3: dominance</a><a href="#p4">PS3 Problem 4: variance vs SSD</a><a href="#p5">PS4 Problem 1: portfolio choice</a></nav>
+</header>
+
+<section id="p1">
+  <div class="head">
+    <div class="eyebrow">Problem Set 3 · Problem 1</div>
+    <h2>Take the gamble or pay CHF 500 for insurance?</h2>
+    <p class="lede">You face a 50/50 chance of gaining or losing CHF 1,000. Insurance removes the risk for CHF 500. At what starting wealth W are you indifferent? Compare two utility functions: ln Y and −1/Y.</p>
+  </div>
+  <div class="panel">
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Utility function">
+        <button id="a-ln" aria-pressed="true">ln Y</button>
+        <button id="a-inv" aria-pressed="false">−1/Y</button>
+      </div>
+      <div class="ctl"><label for="aw">Starting wealth W</label><input type="range" id="aw" min="1100" max="3500" step="10" value="1250"><output id="awo"></output></div>
+      <button class="btn" id="asnap">Jump to indifference</button>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Utility of wealth</h3>
+      <p class="sub">The dashed chord joins the two outcomes. Its midpoint is the expected utility of the gamble.</p>
+      <div class="key">
+        <span><svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" style="stroke:var(--cara);stroke-width:2.5"/></svg>Utility curve</span>
+        <span><svg width="10" height="10"><circle cx="5" cy="5" r="4" style="fill:var(--dara)"/></svg>Expected utility</span>
+        <span><svg width="10" height="10"><circle cx="5" cy="5" r="3.5" style="fill:none;stroke:var(--muted);stroke-width:2"/></svg>Utility of W for sure</span>
+        <span><svg width="10" height="10"><circle cx="5" cy="5" r="4" style="fill:var(--ok)"/></svg>Certainty equivalent</span>
+        <span><svg width="12" height="12"><polygon points="6,0 12,6 6,12 0,6" style="fill:var(--gold)"/></svg>W − 500</span>
+      </div>
+      <div class="chart"><svg id="a1" role="img" aria-label="Utility curve with the gamble chord, expected utility and certainty equivalent"></svg></div>
+    </div>
+    <div class="panel">
+      <h3>What the gamble is worth to you</h3>
+      <p class="sub">Risk premium of the ±1,000 gamble at each wealth level. Where a curve crosses the insurance price, you are indifferent.</p>
+      <div class="key">
+        <span><svg width="26" height="10"><line x1="0" y1="5" x2="26" y2="5" style="stroke:var(--dara);stroke-width:2.5"/></svg>ln Y</span>
+        <span><svg width="26" height="10"><line x1="0" y1="5" x2="26" y2="5" style="stroke:var(--dara);stroke-width:2.5;stroke-dasharray:7 5"/></svg>−1/Y</span>
+        <span><svg width="26" height="10"><line x1="0" y1="5" x2="26" y2="5" style="stroke:var(--gold);stroke-width:1.5;stroke-dasharray:5 4"/></svg>Insurance price</span>
+      </div>
+      <div class="chart"><svg id="a2" role="img" aria-label="Risk premium against starting wealth for ln Y and minus 1 over Y, with the insurance price of 500"></svg></div>
+    </div>
+  </div>
+  <div class="cards">
+    <div class="stat"><span class="k">Starting wealth W</span><span class="v" id="ac0"></span></div>
+    <div class="stat"><span class="k">After insurance, W − 500</span><span class="v" id="ac1"></span></div>
+    <div class="stat"><span class="k">Certainty equivalent of the gamble</span><span class="v" id="ac2"></span></div>
+    <div class="stat"><span class="k">Risk premium, W − CEQ</span><span class="v" id="ac3"></span></div>
+    <div class="stat"><span class="k">Insurance at CHF 500</span><span class="v sm" id="ac4"></span></div>
+  </div>
+  <div class="panel notes">
+    <h3>How to read it</h3>
+    <p><strong>Left chart.</strong> A curved utility function always lies above its chords, so a sure wealth W beats a fair gamble with the same average. Go sideways from the expected utility to the curve and down to the axis to find the certainty equivalent. The gap between W and that value is the most you would pay to remove the risk.</p>
+    <p><strong>Right chart.</strong> Poorer people lose more utility from a CHF 1,000 loss, so the premium falls as wealth rises. The curve crosses the insurance price at W = 1,250 for ln Y and at W = 2,000 for −1/Y. Below that wealth insurance is a good deal, above it you skip it.</p>
+    <p><strong>Why the two answers differ.</strong> −1/Y bends more than ln Y (relative risk aversion of 2 against 1), so it fears the gamble at higher wealth.</p>
+  </div>
+</section>
+
+<section id="p2">
+  <div class="head">
+    <div class="eyebrow">Problem Set 3 · Problem 2</div>
+    <h2>Does risk aversion fall, stay flat or rise with wealth?</h2>
+    <p class="lede">Three utility functions are set to the same absolute risk aversion, RA = −u″/u′, at a wealth of CHF 2,000. They differ only in how RA moves when wealth changes. The same ±1,000 gamble is used throughout.</p>
+  </div>
+  <div class="panel">
+    <div class="controls">
+      <div class="ctl"><label for="bw">Starting wealth W</label><input type="range" id="bw" min="1200" max="2900" step="10" value="2000"><output id="bwo"></output></div>
+    </div>
+  </div>
+  <div class="grid3">
+    <div class="panel fam">
+      <div class="t"><svg width="30" height="10"><line x1="0" y1="5" x2="30" y2="5" style="stroke:var(--cara);stroke-width:3"/></svg><h3>CARA</h3></div>
+      <div class="f">u(Y) = −e<sup>−γY</sup>, γ = 0.0005</div>
+      <p class="sub">Constant absolute risk aversion. Getting richer changes nothing about what you pay to avoid a fixed CHF gamble.</p>
+      <div class="row"><div><b id="fc-p"></b><small>premium</small></div><div><b id="fc-r"></b><small>RA × 1000</small></div></div>
+    </div>
+    <div class="panel fam">
+      <div class="t"><svg width="30" height="10"><line x1="0" y1="5" x2="30" y2="5" style="stroke:var(--dara);stroke-width:3;stroke-dasharray:7 5"/></svg><h3>DARA</h3></div>
+      <div class="f">u(Y) = ln Y, RA = 1/Y</div>
+      <p class="sub">Decreasing absolute risk aversion. Richer means less afraid of the same gamble. This is the realistic case.</p>
+      <div class="row"><div><b id="fd-p"></b><small>premium</small></div><div><b id="fd-r"></b><small>RA × 1000</small></div></div>
+    </div>
+    <div class="panel fam">
+      <div class="t"><svg width="30" height="10"><line x1="1" y1="5" x2="29" y2="5" style="stroke:var(--iara);stroke-width:3;stroke-dasharray:1 6;stroke-linecap:round"/></svg><h3>IARA</h3></div>
+      <div class="f">u(Y) = Y − Y²/(2B), B = 4,000</div>
+      <p class="sub">Increasing absolute risk aversion. Richer means more afraid, and utility stops rising at the bliss point B.</p>
+      <div class="row"><div><b id="fi-p"></b><small>premium</small></div><div><b id="fi-r"></b><small>RA × 1000</small></div></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Risk premium of the ±1,000 gamble</h3>
+      <p class="sub">What each agent would pay to avoid the gamble, by starting wealth.</p>
+      <div class="chart"><svg id="b1" role="img" aria-label="Risk premium against wealth: flat for CARA, falling for DARA, rising for IARA"></svg></div>
+    </div>
+    <div class="panel">
+      <h3>Absolute risk aversion RA(W)</h3>
+      <p class="sub">Flat is CARA, falling is DARA, rising is IARA. All three start from the same RA at W = 2,000.</p>
+      <div class="chart"><svg id="b2" role="img" aria-label="Absolute risk aversion against wealth: flat for CARA, falling for DARA, rising for IARA"></svg></div>
+    </div>
+  </div>
+  <div class="panel notes">
+    <h3>What to notice</h3>
+    <p><strong>The shape of RA(W) gives the class.</strong> A horizontal line is CARA, a falling line is DARA and a rising line is IARA. The premium curve has the same shape, because for a small gamble the premium is about ½ · RA · σ².</p>
+    <p><strong>CRRA is a different question.</strong> Relative risk aversion is RR = W · RA. The ln Y function has RR = 1 at every wealth, so it is CRRA, even though its RA falls. Constant RR implies falling RA, but not the other way round.</p>
+    <p><strong>Why the quadratic is criticised.</strong> Its RA rises with wealth, which says that richer people fear a CHF 1,000 loss more. Its utility also peaks at B, so beyond that wealth more money makes the agent worse off.</p>
+  </div>
+  <div class="head">
+    <h3>Gamble versus certainty equivalent</h3>
+    <p class="lede">Move the wealth slider. The gamble is ±CHF 1,000 at equal odds, so its expected value is your wealth W. The certainty equivalent (CEQ) is the sure amount that gives the same utility as the gamble. All three agents have the same risk aversion at W = 2,000, so any difference you see at other wealth levels comes from the class alone. The second slider sets how risk averse they all are at that point.</p>
+  </div>
+  <div class="panel">
+    <div class="controls">
+      <div class="ctl"><label for="ew">Starting wealth W</label><input type="range" id="ew" min="1200" max="2900" step="10" value="2000"><output id="ewo"></output></div>
+      <div class="ctl"><label for="ep">Risk aversion at W = 2,000 (RA × 1000)</label><input type="range" id="ep" min="0.1" max="0.5" step="0.05" value="0.5"><output id="epo"></output></div>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>Where each agent's certainty equivalent falls</h3>
+    <p class="sub">Each line runs from the bad outcome to the good outcome of the gamble. The shaded part is the risk premium: what the agent gives up to get rid of the risk. It stays the same for CARA, shrinks for DARA and grows for IARA as W rises.</p>
+    <div class="key">
+      <span><svg width="10" height="10"><circle cx="5" cy="5" r="4" style="fill:var(--ink)"/></svg>The two outcomes</span>
+      <span><svg width="10" height="12"><line x1="5" y1="0" x2="5" y2="12" style="stroke:var(--muted);stroke-width:1.5;stroke-dasharray:2 3"/></svg>Expected value W</span>
+      <span><svg width="14" height="14"><circle cx="7" cy="7" r="6" style="fill:var(--cara)"/></svg>CARA</span>
+      <span><svg width="14" height="14"><rect x="1" y="1" width="12" height="12" style="fill:var(--dara)"/></svg>DARA</span>
+      <span><svg width="14" height="14"><polygon points="7,1 13,13 1,13" style="fill:var(--iara)"/></svg>IARA</span>
+      <span>Marker = certainty equivalent</span>
+    </div>
+    <div class="chart"><svg id="e3" role="img" aria-label="For each of CARA, DARA and IARA, the gamble outcomes, the expected value and the certainty equivalent on a wealth line"></svg></div>
+  </div>
+  <div class="head">
+    <h3>Look inside one utility function</h3>
+    <p class="lede">Pick a class to see the utility curve, the chord and the certainty equivalent behind one of the rows above.</p>
+  </div>
+  <div class="panel">
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Utility family">
+        <button id="e-cara" aria-pressed="false">CARA</button>
+        <button id="e-dara" aria-pressed="true">DARA</button>
+        <button id="e-iara" aria-pressed="false">IARA</button>
+      </div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h3 id="eh1"></h3>
+      <p class="sub">Curve, ±1,000 chord and certainty equivalent for the chosen class.</p>
+      <div class="chart"><svg id="e1" role="img" aria-label="Utility curve for the chosen class with the gamble chord and certainty equivalent"></svg></div>
+    </div>
+    <div class="panel">
+      <h3>Risk premium against wealth</h3>
+      <p class="sub">The dot follows the wealth slider.</p>
+      <div class="chart"><svg id="e2" role="img" aria-label="Risk premium against wealth for the chosen class"></svg></div>
+    </div>
+  </div>
+  <div class="cards">
+    <div class="stat"><span class="k">Class</span><span class="v sm" id="ec0"></span></div>
+    <div class="stat"><span class="k">RA(W) × 1000</span><span class="v" id="ec1"></span></div>
+    <div class="stat"><span class="k">RR(W) = W · RA</span><span class="v" id="ec2"></span></div>
+    <div class="stat"><span class="k">Risk premium, exact</span><span class="v" id="ec3"></span></div>
+    <div class="stat"><span class="k">Approximation ½ · RA · 1000²</span><span class="v" id="ec4"></span></div>
+  </div>
+</section>
+
+<section id="p3">
+  <div class="head">
+    <div class="eyebrow">Problem Set 3 · Problem 3</div>
+    <h2>Can you rank two risky investments without knowing the investor?</h2>
+    <p class="lede">Investment A pays 2, 4 or 9 with probabilities 0.25, 0.5 and 0.25. Investment B pays 1, 6 or 8 with probability one third each. Each criterion assumes more about the investor than the one before, so each can rank fewer pairs.</p>
+  </div>
+  <div class="grid3">
+    <div class="panel">
+      <h3>First-order dominance</h3>
+      <p class="sub">Assumes only that the investor prefers more to less. A beats B when F<sub>A</sub>(x) ≤ F<sub>B</sub>(x) for every x, so A is at least as likely as B to clear any threshold.</p>
+      <span class="pill eq">A and B: no ranking</span>
+      <p class="sub">The CDFs cross, so some payoff levels favour A and others favour B.</p>
+    </div>
+    <div class="panel">
+      <h3>Second-order dominance</h3>
+      <p class="sub">Assumes the investor is also risk averse. A beats B when the area under F<sub>A</sub> never exceeds the area under F<sub>B</sub>. Then every risk-averse investor picks A.</p>
+      <span class="pill eq">A and B: no ranking</span>
+      <p class="sub">The areas cross at x = 5.2, and B has the higher mean.</p>
+    </div>
+    <div class="panel">
+      <h3>Mean-variance</h3>
+      <p class="sub">Assumes the investor cares only about the mean and the variance. A beats B when its mean is at least as high and its variance at most as high.</p>
+      <span class="pill eq">A and B: no ranking</span>
+      <p class="sub">B has the higher mean and the higher variance. The answer depends on how much variance is disliked.</p>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="controls">
+      <div class="ctl"><label for="cx">Payoff x</label><input type="range" id="cx" min="0" max="10" step="0.1" value="5"><output id="cxo"></output></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h3>First order: the CDFs</h3>
+      <p class="sub">Shading shows which investment has the lower CDF, which is the better one at that payoff.</p>
+      <div class="key">
+        <span><svg width="26" height="10"><line x1="0" y1="5" x2="26" y2="5" style="stroke:var(--ia);stroke-width:2.5"/></svg>A: 2, 4, 9</span>
+        <span><svg width="26" height="10"><line x1="0" y1="5" x2="26" y2="5" style="stroke:var(--ib);stroke-width:2.5;stroke-dasharray:6 4"/></svg>B: 1, 6, 8</span>
+        <span><svg width="12" height="12"><rect width="12" height="12" rx="2" style="fill:var(--ia);opacity:.3"/></svg>A better</span>
+        <span><svg width="12" height="12"><rect width="12" height="12" rx="2" style="fill:var(--ib);opacity:.3"/></svg>B better</span>
+      </div>
+      <div class="chart"><svg id="c1" role="img" aria-label="Cumulative distribution functions of A and B, which cross"></svg></div>
+    </div>
+    <div class="panel">
+      <h3>Second order: the area under the CDFs</h3>
+      <p class="sub">A smaller area is better. For A to dominate, its area would have to stay below B's everywhere.</p>
+      <div class="key">
+        <span><svg width="26" height="10"><line x1="0" y1="5" x2="26" y2="5" style="stroke:var(--ia);stroke-width:2.5"/></svg>Area under F<sub>A</sub></span>
+        <span><svg width="26" height="10"><line x1="0" y1="5" x2="26" y2="5" style="stroke:var(--ib);stroke-width:2.5;stroke-dasharray:6 4"/></svg>Area under F<sub>B</sub></span>
+      </div>
+      <div class="chart"><svg id="c2" role="img" aria-label="Integrals of the CDFs of A and B, which cross at 5.2"></svg></div>
+    </div>
+  </div>
+  <div class="cards">
+    <div class="stat"><span class="k">F(x): A against B</span><span class="v" id="cc1"></span><span class="k" id="cv1"></span></div>
+    <div class="stat"><span class="k">Area under F: A against B</span><span class="v" id="cc2"></span><span class="k" id="cv2"></span></div>
+    <div class="stat"><span class="k">Mean: A against B</span><span class="v" id="cc3"></span><span class="k">B is higher</span></div>
+    <div class="stat"><span class="k">Variance: A against B</span><span class="v" id="cc4"></span><span class="k">A is lower</span></div>
+  </div>
+  <div class="panel">
+    <h3>The numbers behind the charts</h3>
+    <p class="sub">D(x) is the area under F<sub>B</sub> minus the area under F<sub>A</sub>. A positive sign favours A. The signs of F<sub>B</sub> − F<sub>A</sub> and of D both change along the row, so neither FSD nor SSD holds.</p>
+    <div class="tablewrap"><table id="ctab"></table></div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Two risk-averse investors disagree</h3>
+      <p class="sub">If one risk-averse investor prefers A and another prefers B, no second-order ranking can exist.</p>
+      <div class="cards">
+        <div class="stat"><span class="k">Log investor, E[ln x]</span><span class="v sm" id="ci1"></span><span class="pill" id="cp1"></span></div>
+        <div class="stat"><span class="k">Mild risk aversion, u = x − 0.01x², E[u]</span><span class="v sm" id="ci2"></span><span class="pill" id="cp2"></span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>A mean-variance investor</h3>
+      <p class="sub">Score = mean − ½ · λ · variance, where λ measures how much variance is disliked.</p>
+      <div class="controls"><div class="ctl"><label for="cl">Variance penalty λ</label><input type="range" id="cl" min="0" max="0.6" step="0.01" value="0.1"><output id="clo"></output></div></div>
+      <div class="cards">
+        <div class="stat"><span class="k">Score of A</span><span class="v" id="cs1"></span></div>
+        <div class="stat"><span class="k">Score of B</span><span class="v" id="cs2"></span></div>
+        <div class="stat"><span class="k">Preferred</span><span class="v sm" id="cs3"></span></div>
+      </div>
+      <p class="sub">B wins while λ is below about 0.25. Above that, the extra variance costs more than the extra mean is worth.</p>
+    </div>
+  </div>
+  <div class="panel notes">
+    <h3>How to read it</h3>
+    <p><strong>The three criteria form a ladder.</strong> First-order dominance implies second-order dominance, which implies a higher mean. Each rung is easier to satisfy but holds for fewer investors. Here both dominance tests fail, and mean-variance is inconclusive.</p>
+    <p><strong>Why the CDFs cross.</strong> A has the better worst case (2 against 1) and the better best case (9 against 8). B wins in the middle: it pays 6 where A typically pays 4. That middle outcome is what gives B its higher mean.</p>
+    <p><strong>What a partial ordering means.</strong> The criteria never say that two investments are equally good. They say that every investor in a group agrees, or that the group is split. Here the risk-averse group is split.</p>
+  </div>
+</section>
+
+<section id="p4">
+  <div class="head">
+    <div class="eyebrow">Problem Set 3 · Problem 4</div>
+    <h2>Why lower variance does not mean second-order dominance</h2>
+    <p class="lede">Part (a) shows that when two investments have the same mean, second-order dominance implies lower variance. Part (b) shows that the reverse fails. The key is what variance measures and what second-order dominance demands.</p>
+  </div>
+
+  <div class="panel">
+    <h3>Part (a): a spread adds variance</h3>
+    <p class="sub">A takes 2 or 4 at equal odds. B is A plus zero-mean noise ε: every outcome of A moves up or down by s at equal odds. The mean stays at 3, the outcomes move apart, and the variance grows by exactly s². Every risk-averse agent dislikes this.</p>
+    <div class="controls"><div class="ctl"><label for="sx">Size of the noise s</label><input type="range" id="sx" min="0" max="2" step="0.05" value="1"><output id="sxo"></output></div></div>
+    <div class="grid2">
+      <div class="chart"><svg id="g1" role="img" aria-label="Outcomes of A and of B, which is A plus noise, with the same mean of 3"></svg></div>
+      <div class="cards" style="align-content:start">
+        <div class="stat"><span class="k">Variance of A</span><span class="v" id="sv1"></span></div>
+        <div class="stat"><span class="k">Variance of the noise ε</span><span class="v" id="sv2"></span></div>
+        <div class="stat"><span class="k">Variance of B</span><span class="v" id="sv3"></span></div>
+        <div class="stat"><span class="k">Var(A) + Var(ε)</span><span class="v" id="sv4"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="head">
+    <h3>Part (b): lower variance does not imply second-order dominance</h3>
+    <p class="lede">L1 pays 0, 2, 4 or 6 with probability ¼ each. L2 pays 0.1, 3 or 5.9 with probability ⅓ each. The agent has utility U(Y) = 2Y for Y ≤ 3 and 3 + Y for Y > 3. If lower variance implied SSD, L1 would dominate L2 and every risk-averse agent would prefer L1. So it is enough to find one risk-averse agent who prefers L2.</p>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Step 1: the agent is risk averse</h3>
+      <p class="sub">Both pieces of U give 6 at Y = 3, so the function is continuous. Its slope drops from 2 to 1, so it is increasing and concave. The dashed line continues the steep slope to show the bend.</p>
+      <div class="key">
+        <span><svg width="12" height="12"><circle cx="6" cy="6" r="5" style="fill:var(--ia)"/></svg>Outcomes of L1</span>
+        <span><svg width="12" height="12"><circle cx="6" cy="6" r="5" style="fill:var(--ib)"/></svg>Outcomes of L2</span>
+      </div>
+      <div class="chart"><svg id="g4" role="img" aria-label="Utility function with a kink at 3, slope 2 below and slope 1 above, with the outcomes of both lotteries on the curve"></svg></div>
+    </div>
+    <div class="panel">
+      <h3>Step 2: same mean, lower variance for L1</h3>
+      <p class="sub">Both lotteries have a mean of 3. The variance is E[X²] − 3².</p>
+      <div class="chart"><svg id="g5" role="img" aria-label="Outcome probabilities of L1 and L2 with the common mean of 3"></svg></div>
+      <div class="cards">
+        <div class="stat"><span class="k">Mean, L1 and L2</span><span class="v sm" id="m1"></span></div>
+        <div class="stat"><span class="k">E[X²]</span><span class="v sm" id="m2"></span></div>
+        <div class="stat"><span class="k">Variance</span><span class="v sm" id="m3"></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>Step 3: expected utility of each lottery</h3>
+    <p class="sub">Apply U to every outcome and weight by its probability.</p>
+    <div class="grid2">
+      <div class="tablewrap"><table class="sm" id="u1"></table></div>
+      <div class="tablewrap"><table class="sm" id="u2"></table></div>
+    </div>
+    <div class="cards">
+      <div class="stat"><span class="k">E[U] for L1</span><span class="v" id="uc1"></span></div>
+      <div class="stat"><span class="k">E[U] for L2</span><span class="v" id="uc2"></span></div>
+      <div class="stat"><span class="k">This agent prefers</span><span class="v sm" id="uc3"></span></div>
+    </div>
+  </div>
+  <div class="panel notes">
+    <h3>Step 4: conclusion</h3>
+    <p>L1 has the lower variance, yet this risk-averse agent prefers L2. Second-order dominance means that every risk-averse agent prefers the dominating lottery. So L1 does not second-order dominate L2, even though the two have the same mean and L1 has the lower variance.</p>
+    <p>L2 does not dominate L1 either. By part (a), a dominating lottery with equal mean must have the lower variance, and L2 has the higher one.</p>
+  </div>
+
+  <div class="head">
+    <h3>The intuition in one picture</h3>
+    <p class="lede">Variance counts every move away from 3, up or down. The agent in Step 1 only worries about falling below 3, and each franc lost there costs twice as much as a franc gained above 3 is worth. Shaded bars show how far each outcome falls below 3.</p>
+  </div>
+  <div class="panel">
+    <div class="chart"><svg id="g6" role="img" aria-label="Outcomes of L1 and L2 on a line, with the fall below 3 shaded for each outcome under 3"></svg></div>
+    <div class="cards">
+      <div class="stat"><span class="k">Overall spread: variance</span><span class="v sm" id="in1"></span><span class="k">L1 looks safer</span></div>
+      <div class="stat"><span class="k">Average fall below 3</span><span class="v sm" id="in2"></span><span class="k">L2 looks safer</span></div>
+    </div>
+    <p>L2 has the larger variance (5.61 against 5.00). But the average fall below 3, which is what this agent fears, is a little smaller for L2: ⅓ × 2.9 = 0.97 against ¼ × 3 + ¼ × 1 = 1.00. The two measures look at different things, so they can rank the lotteries differently. Second-order dominance asks that every risk-averse agent agrees, and here they do not.</p>
+  </div>
+</section>
+
+<section id="p5">
+  <div class="head">
+    <div class="eyebrow">Problem Set 4 · Problem 1</div>
+    <h2>How much risk does the agent choose to take?</h2>
+    <p class="lede">An agent has wealth 1 to split between a riskless asset that pays 2 per unit and a risky asset that pays z = 1, 2 or 3 and cannot be sold short. In Problem Set 3 the gamble was given and we priced it. Here the agent chooses how much of the risky asset to hold, and the answer depends on how risk aversion moves with wealth. With CARA utility u(Y) = 1 − e<sup>−bY</sup> the first-order condition gives a* = ln(p<sub>3</sub>/p<sub>1</sub>) / (2b).</p>
+  </div>
+
+  <div class="head">
+    <h3>Part f): the premium for holding the risky asset alone</h3>
+    <p class="lede">Suppose the agent puts all of his wealth in the risky asset, so a* = 1. That fixes p<sub>3</sub> = p<sub>1</sub>e<sup>2b</sup>. The certainty equivalent Rs is the riskless return that he would swap the risky asset for. The risk premium is the gap between the expected return E[z] and Rs. Move the sliders and watch which gap on the line is the premium.</p>
+  </div>
+  <div class="panel">
+    <div class="controls">
+      <div class="ctl"><label for="p5b">Risk aversion b</label><input type="range" id="p5b" min="0.1" max="1" step="0.05" value="0.5"><output id="p5bo"></output></div>
+      <div class="ctl"><label for="p5p">Probability of z = 1, p<sub>1</sub></label><input type="range" id="p5p" min="0.01" max="0.26" step="0.01" value="0.25"><output id="p5po"></output></div>
+    </div>
+    <p class="sub">The agent holds exactly his whole wealth when p<sub>3</sub> = p<sub>1</sub>e<sup>2b</sup> and p<sub>2</sub> = 1 − p<sub>1</sub> − p<sub>3</sub> is not negative. That needs p<sub>1</sub> below 1/(1 + e<sup>2b</sup>) = <strong id="p5lim"></strong>, so the p<sub>1</sub> slider stops there.</p>
+  </div>
+  <div class="cards">
+    <div class="stat"><span class="k">Probabilities p<sub>1</sub> · p<sub>2</sub> · p<sub>3</sub></span><span class="v sm" id="p5c0"></span></div>
+    <div class="stat"><span class="k">Expected return E[z]</span><span class="v" id="p5c1"></span></div>
+    <div class="stat"><span class="k">Certainty equivalent Rs</span><span class="v" id="p5c2"></span></div>
+    <div class="stat hl"><span class="k">Risk premium, E[z] − Rs</span><span class="v" id="p5c3"></span><span class="k">this is the premium</span></div>
+    <div class="stat"><span class="k">Expected excess return, E[z] − 2</span><span class="v" id="p5c4"></span><span class="k">not the risk premium</span></div>
+    <div class="stat"><span class="k">Gain over the riskless asset, Rs − 2</span><span class="v" id="p5c5"></span><span class="k">not the risk premium</span></div>
+  </div>
+  <div class="panel">
+    <h3>Three gaps on the return line, and only one is the risk premium</h3>
+    <p class="sub">The dots at the top show the three payoffs of the risky asset and their probabilities. The shaded band is the risk premium: the expected return the agent gives up because the payoff is uncertain. The two grey brackets are other differences that are easy to mistake for it.</p>
+    <div class="key">
+      <span><svg width="10" height="10"><circle cx="5" cy="5" r="4" style="fill:var(--ink)"/></svg>Payoff z and its probability</span>
+      <span><svg width="12" height="12"><polygon points="6,0 12,6 6,12 0,6" style="fill:var(--gold)"/></svg>Riskless return 2</span>
+      <span><svg width="12" height="12"><circle cx="6" cy="6" r="5" style="fill:var(--ok)"/></svg>Certainty equivalent Rs</span>
+      <span><svg width="12" height="12"><circle cx="6" cy="6" r="5" style="fill:var(--dara)"/></svg>Expected return E[z]</span>
+      <span><svg width="14" height="12"><rect width="14" height="12" rx="2" style="fill:var(--cara);opacity:.3"/></svg>Risk premium</span>
+      <span><svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" style="stroke:var(--muted);stroke-width:1.5"/></svg>Other gaps, not the premium</span>
+    </div>
+    <div class="chart"><svg id="p5l" role="img" aria-label="Return line showing the riskless return 2, the certainty equivalent Rs and the expected return E of z, with the gap between Rs and E of z shaded as the risk premium"></svg></div>
+    <p class="sub" id="p5id"></p>
+  </div>
+
+  <div class="panel">
+    <h3>The same premium on the utility function</h3>
+    <p class="sub">The three dots on the curve are the payoffs z = 1, 2 and 3, and the dashed line joins them. Their probability-weighted average is the orange dot: the average return E[z] on the horizontal axis and the expected utility E[U] on the vertical axis. Go sideways from E[U] until you reach the curve. That point is the certainty equivalent Rs, because a sure return of Rs gives the same utility as the lottery. The horizontal gap between Rs and E[z] is the risk premium. The short vertical gap between the orange dot and the curve is the same loss measured in utility.</p>
+    <div class="key">
+      <span><svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" style="stroke:var(--cara);stroke-width:2.5"/></svg>Utility u(R) = 1 − e<sup>−bR</sup></span>
+      <span><svg width="10" height="10"><circle cx="5" cy="5" r="4" style="fill:var(--cara)"/></svg>Payoffs z = 1, 2, 3 (above the axis labels 1, 2, 3)</span>
+      <span><svg width="12" height="12"><circle cx="6" cy="6" r="5" style="fill:var(--dara)"/></svg>Average return E[z] and expected utility E[U]</span>
+      <span><svg width="10" height="10"><circle cx="5" cy="5" r="3.5" style="fill:var(--surface);stroke:var(--muted);stroke-width:2"/></svg>Curve at E[z]</span>
+      <span><svg width="12" height="12"><circle cx="6" cy="6" r="5" style="fill:var(--ok)"/></svg>Certainty equivalent Rs</span>
+      <span><svg width="12" height="12"><polygon points="6,0 12,6 6,12 0,6" style="fill:var(--gold)"/></svg>Riskless return 2</span>
+      <span><svg width="14" height="12"><rect width="14" height="12" rx="2" style="fill:var(--cara);opacity:.3"/></svg>Risk premium</span>
+    </div>
+    <div class="chart"><svg id="p5u" role="img" aria-label="Utility curve with the three payoffs, the expected utility, the certainty equivalent Rs and the average return E of z, with the horizontal gap between Rs and E of z shaded as the risk premium"></svg></div>
+    <p class="sub">The curve bends, so the sure return Rs that matches the lottery sits to the left of the average return. The more the curve bends (the larger b), the wider the shaded gap.</p>
+  </div>
+
+  <div class="head">
+    <h3>Parts d) and e): what the agent does when he gets richer</h3>
+    <p class="lede">The same risky asset, three agents. All three have the same absolute risk aversion b at final wealth 2, which is where wealth 1 puts them, so any difference comes from how risk aversion changes with wealth. This is the Problem 2 lesson from Problem Set 3 applied to a portfolio choice.</p>
+  </div>
+  <div class="panel">
+    <div class="controls">
+      <div class="seg" role="group" aria-label="What to plot">
+        <button id="p5m-a" aria-pressed="true">Amount a*</button>
+        <button id="p5m-s" aria-pressed="false">Share a*/Y</button>
+      </div>
+      <div class="ctl"><label for="p5y">Initial wealth Y</label><input type="range" id="p5y" min="0.5" max="3" step="0.05" value="1"><output id="p5yo"></output></div>
+    </div>
+  </div>
+  <div class="panel">
+    <h3 id="p5wh"></h3>
+    <p class="sub">The dots follow the wealth slider. The dotted vertical line marks Y = 1, where the three agents have the same risk aversion.</p>
+    <div class="key">
+      <span><svg width="26" height="10"><line x1="0" y1="5" x2="26" y2="5" style="stroke:var(--cara);stroke-width:2.5"/></svg>CARA: u = 1 − e<sup>−bY</sup></span>
+      <span><svg width="26" height="10"><line x1="0" y1="5" x2="26" y2="5" style="stroke:var(--dara);stroke-width:2.5;stroke-dasharray:7 5"/></svg>CRRA: u = Y<sup>1−γ</sup>/(1−γ), γ = 2b</span>
+      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" style="stroke:var(--iara);stroke-width:3;stroke-dasharray:1 6;stroke-linecap:round"/></svg>Quadratic (IARA)</span>
+    </div>
+    <div class="chart"><svg id="p5w" role="img" aria-label="Optimal holding of the risky asset against initial wealth for CARA, CRRA and quadratic utility"></svg></div>
+  </div>
+  <div class="cards">
+    <div class="stat"><span class="k" id="p5n1"></span><span class="v" id="p5k1"></span><span class="k" id="p5t1"></span></div>
+    <div class="stat"><span class="k" id="p5n2"></span><span class="v" id="p5k2"></span><span class="k" id="p5t2"></span></div>
+    <div class="stat"><span class="k" id="p5n3"></span><span class="v" id="p5k3"></span><span class="k" id="p5t3"></span></div>
+  </div>
+  <div class="panel notes">
+    <h3>How to read it</h3>
+    <p><strong>Which gap is the risk premium.</strong> The risk premium is E[z] − Rs: the expected return the agent gives up to swap the risky asset for a sure return. It is the same gap as W − CEQ in Problem 1 of Problem Set 3, where the expected value of the gamble was W. The expected excess return E[z] − 2 is larger, because it also contains Rs − 2, the gain the agent keeps over the riskless asset.</p>
+    <p><strong>Why a* = 1 pins down the probabilities.</strong> The first-order condition −p<sub>1</sub>u′(2 − a) + p<sub>3</sub>u′(2 + a) = 0 gives a* = ln(p<sub>3</sub>/p<sub>1</sub>) / (2b) for CARA. Setting a* = 1 gives p<sub>3</sub> = p<sub>1</sub>e<sup>2b</sup>. Then p<sub>2</sub> = 1 − p<sub>1</sub>(1 + e<sup>2b</sup>) must be at least zero, which is the restriction on p<sub>1</sub>. At b = 0.5 and p<sub>1</sub> = 0.25 the risk premium is 0.2072.</p>
+    <p><strong>The wealth response follows RA.</strong> With constant absolute risk aversion the amount in the risky asset does not change with Y, and the extra wealth goes to the riskless asset. With falling absolute risk aversion (CRRA) the amount grows in proportion to Y, so the share a*/Y is constant. With rising absolute risk aversion (quadratic utility) the amount falls and reaches zero at Y = (1 + 2b)/(2b), so the risky asset is an inferior good.</p>
+    <p><strong>The calibration.</strong> The CRRA agent has γ = 2b and the quadratic agent has c = b/(1 + 2b), so both match the CARA agent's risk aversion b at final wealth 2. Problem Set 4 restricts γ to the interval from 0 to 1, which holds when b is below 0.5, and γ = 1 is ln Y.</p>
+  </div>
+</section>
+
+<footer>Problems 1 and 2 use a gamble of ±CHF 1,000 at equal odds. Problems 3 and 4 use the discrete distributions from the problem set. Every number is computed exactly. Problem Set 4 works in gross returns, so the riskless asset pays 2 per unit invested. Utility functions are only defined up to a positive linear transformation, so the vertical scale of the utility charts has no meaning of its own.</footer>
+</div>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var fmt=function(n){return Math.round(n).toLocaleString('en-US')};
+var M={
+  cara:function(q){return{U:function(y){return -Math.exp(-q*y)},Ui:function(u){return -Math.log(-u)/q},RA:function(){return q}}},
+  crra:function(q){
+    if(Math.abs(q-1)<1e-9)return{U:Math.log,Ui:Math.exp,RA:function(y){return 1/y}};
+    return{U:function(y){return (Math.pow(y,1-q)-1)/(1-q)},Ui:function(u){return Math.pow(1+(1-q)*u,1/(1-q))},RA:function(y){return q/y}};
+  },
+  quad:function(b){return{U:function(y){return y-y*y/(2*b)},Ui:function(u){return b-Math.sqrt(Math.max(0,b*b-2*b*u))},RA:function(y){return 1/(b-y)},bliss:b}}
+};
+function prem(m,W){return W-m.Ui((m.U(W-1000)+m.U(W+1000))/2)}
+function ticks(a,b,n){
+  var r=b-a,s=Math.pow(10,Math.floor(Math.log10(r/n))),f=r/n/s,st=(f<1.5?1:f<3?2:f<7?5:10)*s,t=[];
+  for(var v=Math.ceil(a/st-1e-9)*st;v<=b+1e-9;v+=st)t.push(Math.round(v/st)*st);
+  return t;
+}
+function frame(svg,o){
+  var w=Math.max(260,svg.parentNode.clientWidth||400),h=o.h||280;
+  svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.style.height=h+'px';
+  var L=o.L||48,R=w-16,T=16,B=h-38;
+  var px=function(x){return L+(x-o.x0)/(o.x1-o.x0)*(R-L)};
+  var py=function(y){return B-(y-o.y0)/(o.y1-o.y0)*(B-T)};
+  var s='';
+  (o.yt||[]).forEach(function(v){s+='<line class="gr" x1="'+L+'" x2="'+R+'" y1="'+py(v)+'" y2="'+py(v)+'"/><text class="tk" x="'+(L-8)+'" y="'+(py(v)+4)+'" text-anchor="end">'+(o.fy?o.fy(v):fmt(v))+'</text>';});
+  (o.xt||[]).forEach(function(v){s+='<text class="tk" x="'+px(v)+'" y="'+(B+16)+'" text-anchor="middle">'+(o.fx?o.fx(v):fmt(v))+'</text>';});
+  s+='<line class="ax" x1="'+L+'" x2="'+R+'" y1="'+B+'" y2="'+B+'"/><line class="ax" x1="'+L+'" x2="'+L+'" y1="'+T+'" y2="'+B+'"/>';
+  s+='<text class="tk" x="'+R+'" y="'+(h-6)+'" text-anchor="end">'+o.xl+'</text>';
+  return{s:s,px:px,py:py,L:L,R:R,T:T,B:B,w:w,h:h};
+}
+function pathOf(pts,r,style){
+  var d='';pts.forEach(function(p,i){d+=(i?'L':'M')+r.px(p[0]).toFixed(1)+' '+r.py(p[1]).toFixed(1)+' '});
+  return '<path d="'+d+'" fill="none" style="'+style+'stroke-linejoin:round;stroke-linecap:round"/>';
+}
+function dot(x,y,fill,extra){return '<circle cx="'+x+'" cy="'+y+'" r="'+(extra||5)+'" style="fill:'+fill+';stroke:var(--surface);stroke-width:2"/>'}
+
+function drawUtility(id,m,W,o){
+  o=o||{};
+  var svg=$(id),X0=100,X1=4600,N=140,pts=[],lo=1e18,hi=-1e18;
+  for(var i=0;i<=N;i++){var x=X0+(X1-X0)*i/N,u=m.U(x);pts.push([x,u]);if(u<lo)lo=u;if(u>hi)hi=u}
+  var pad=(hi-lo)*.06;
+  var r=frame(svg,{x0:X0,x1:X1,y0:lo-pad,y1:hi+pad,xt:[1000,2000,3000,4000],xl:'Wealth (CHF)',L:16});
+  var ua=m.U(W-1000),ub=m.U(W+1000),eu=(ua+ub)/2,uw=m.U(W),ceq=m.Ui(eu),s=r.s;
+  if(m.bliss&&m.bliss<X1){
+    s+='<line x1="'+r.px(m.bliss)+'" x2="'+r.px(m.bliss)+'" y1="'+r.T+'" y2="'+r.B+'" style="stroke:var(--iara);stroke-width:1;stroke-dasharray:2 4"/><text class="tk" x="'+(r.px(m.bliss)+5)+'" y="'+(r.T+10)+'">bliss point B</text>';
+  }
+  s+=pathOf(pts,r,'stroke:var(--cara);stroke-width:2.5;');
+  s+='<line x1="'+r.px(W-1000)+'" y1="'+r.py(ua)+'" x2="'+r.px(W+1000)+'" y2="'+r.py(ub)+'" style="stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 4"/>';
+  s+='<line x1="'+r.px(W)+'" y1="'+r.py(eu)+'" x2="'+r.px(W)+'" y2="'+r.py(uw)+'" style="stroke:var(--muted);stroke-dasharray:2 3"/>';
+  s+='<line x1="'+r.px(W)+'" y1="'+r.py(eu)+'" x2="'+r.px(ceq)+'" y2="'+r.py(eu)+'" style="stroke:var(--ok);stroke-width:1.5;stroke-dasharray:5 4"/>';
+  s+='<line x1="'+r.px(ceq)+'" y1="'+r.py(eu)+'" x2="'+r.px(ceq)+'" y2="'+r.B+'" style="stroke:var(--ok);stroke-width:1.5;stroke-dasharray:5 4"/>';
+  if(o.ins){var ix=r.px(W-500);s+='<polygon points="'+ix+','+(r.B-7)+' '+(ix+7)+','+r.B+' '+ix+','+(r.B+7)+' '+(ix-7)+','+r.B+'" style="fill:var(--gold);stroke:var(--surface);stroke-width:1.5"/>'}
+  s+=dot(r.px(W-1000),r.py(ua),'var(--cara)',4.5)+dot(r.px(W+1000),r.py(ub),'var(--cara)',4.5);
+  s+='<circle cx="'+r.px(W)+'" cy="'+r.py(uw)+'" r="4.5" style="fill:var(--surface);stroke:var(--muted);stroke-width:2"/>';
+  s+=dot(r.px(W),r.py(eu),'var(--dara)',5)+dot(r.px(ceq),r.py(eu),'var(--ok)',5);
+  s+='<text class="tk" x="'+(r.px(W-1000)+(r.px(W-1000)<r.L+40?6:0))+'" y="'+(r.py(ua)-10)+'" text-anchor="'+(r.px(W-1000)<r.L+40?'start':'middle')+'">W−1000</text>';
+  s+='<text class="tk" x="'+r.px(W+1000)+'" y="'+(r.py(ub)-10)+'" text-anchor="'+(r.px(W+1000)>r.R-40?'end':'middle')+'">W+1000</text>';
+  s+='<text class="tk" x="'+(r.px(W)+9)+'" y="'+(r.py(eu)+18)+'">E[U]</text>';
+  s+='<text class="tk" x="'+r.px(W)+'" y="'+(r.py(uw)-10)+'" text-anchor="middle">U(W)</text>';
+  s+='<text class="tk" x="'+(r.px(ceq)-6)+'" y="'+(r.B-10)+'" text-anchor="end">CEQ</text>';
+  svg.innerHTML=s;
+}
+
+function drawLines(id,o){
+  var svg=$(id),N=90,hi=0,data=[];
+  o.series.forEach(function(sr){
+    var pts=[];for(var i=0;i<=N;i++){var x=o.x0+(o.x1-o.x0)*i/N,y=sr.f(x);pts.push([x,y]);if(y>hi)hi=y}
+    data.push(pts);
+  });
+  (o.ref||[]).forEach(function(q){if(q.y>hi)hi=q.y});
+  hi*=1.12;
+  var r=frame(svg,{x0:o.x0,x1:o.x1,y0:0,y1:hi,xt:o.xt,yt:ticks(0,hi,4),fy:o.fy,fx:o.fx,xl:o.xl,L:o.L||44}),s=r.s;
+  (o.ref||[]).forEach(function(q){
+    s+='<line x1="'+r.L+'" x2="'+r.R+'" y1="'+r.py(q.y)+'" y2="'+r.py(q.y)+'" style="stroke:var(--gold);stroke-width:1.5;stroke-dasharray:5 4"/><text class="lb" x="'+(r.R-2)+'" y="'+(r.py(q.y)-6)+'" text-anchor="end" style="fill:var(--gold)">'+q.label+'</text>';
+  });
+  if(o.calib){
+    s+='<line x1="'+r.px(o.calib)+'" x2="'+r.px(o.calib)+'" y1="'+r.T+'" y2="'+r.B+'" style="stroke:var(--muted);stroke-width:1;stroke-dasharray:1 4"/><text class="tk" x="'+(r.px(o.calib)+5)+'" y="'+(o.calibTop?r.T+12:r.B-6)+'">'+(o.calibLabel||'same RA at 2,000')+'</text>';
+  }
+  s+='<line x1="'+r.px(o.W)+'" x2="'+r.px(o.W)+'" y1="'+r.T+'" y2="'+r.B+'" style="stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 4"/>';
+  o.series.forEach(function(sr,i){
+    s+=pathOf(data[i],r,'stroke:var(--'+sr.c+');stroke-width:'+(sr.w||2.5)+';'+(sr.dash?'stroke-dasharray:'+sr.dash+';':''));
+    var last=data[i][N];
+    if(sr.label)s+='<text class="lb" x="'+(r.R-2)+'" y="'+(r.py(last[1])-9)+'" text-anchor="end" style="fill:var(--'+sr.c+')">'+sr.label+'</text>';
+    if(sr.dot!==false)s+=dot(r.px(o.W),r.py(sr.f(o.W)),'var(--'+sr.c+')',5.5);
+  });
+  (o.pts||[]).forEach(function(p){
+    s+='<circle cx="'+r.px(p.x)+'" cy="'+r.py(p.y)+'" r="5" style="fill:var(--surface);stroke:var(--ink);stroke-width:2"/><text class="lb" x="'+r.px(p.x)+'" y="'+(r.py(p.y)+20)+'" text-anchor="middle" style="fill:var(--ink)">'+p.label+'</text>';
+  });
+  svg.innerHTML=s;
+}
+
+var LN=M.crra(1),INV=M.crra(2);
+var aFam='ln';
+function renderA(){
+  var W=+$('aw').value,m=aFam==='ln'?LN:INV,pr=prem(m,W),ceq=W-pr;
+  $('awo').textContent='CHF '+fmt(W);
+  drawUtility('a1',m,W,{ins:true});
+  drawLines('a2',{
+    series:[
+      {f:function(x){return prem(LN,x)},c:'dara',label:'ln Y',dot:aFam==='ln'},
+      {f:function(x){return prem(INV,x)},c:'dara',dash:'7 5',label:'−1/Y',dot:aFam==='inv'}
+    ],
+    x0:1100,x1:3500,W:W,xt:[1500,2000,2500,3000,3500],xl:'Starting wealth W (CHF)',
+    ref:[{y:500,label:'Insurance price 500'}],
+    pts:[{x:1250,y:500,label:'1,250'},{x:2000,y:500,label:'2,000'}]
+  });
+  $('ac0').textContent=fmt(W);$('ac1').textContent=fmt(W-500);$('ac2').textContent=fmt(ceq);$('ac3').textContent=fmt(pr);
+  var v=$('ac4');
+  if(Math.abs(pr-500)<6){v.className='v sm';v.innerHTML='<span class="pill eq">Indifferent</span>'}
+  else if(pr>500){v.className='v sm';v.innerHTML='<span class="pill ok">Buy: you would pay '+fmt(pr)+'</span>'}
+  else{v.className='v sm';v.innerHTML='<span class="pill bad">Skip: worth only '+fmt(pr)+'</span>'}
+}
+
+var CARA0=M.cara(0.0005),DARA0=M.crra(1),IARA0=M.quad(4000);
+function renderB(){
+  var W=+$('bw').value;
+  $('bwo').textContent='CHF '+fmt(W);
+  var base={x0:1200,x1:2900,W:W,xt:[1500,2000,2500],xl:'Starting wealth W (CHF)',calib:2000};
+  drawLines('b1',Object.assign({},base,{fy:fmt,series:[
+    {f:function(x){return prem(CARA0,x)},c:'cara',label:'CARA'},
+    {f:function(x){return prem(DARA0,x)},c:'dara',dash:'7 5',label:'DARA'},
+    {f:function(x){return prem(IARA0,x)},c:'iara',dash:'1 6',w:3.5,label:'IARA'}
+  ]}));
+  drawLines('b2',Object.assign({},base,{fy:function(v){return v.toFixed(2)},series:[
+    {f:function(x){return CARA0.RA(x)*1000},c:'cara',label:'CARA'},
+    {f:function(x){return DARA0.RA(x)*1000},c:'dara',dash:'7 5',label:'DARA'},
+    {f:function(x){return IARA0.RA(x)*1000},c:'iara',dash:'1 6',w:3.5,label:'IARA'}
+  ]}));
+  $('fc-p').textContent=fmt(prem(CARA0,W));$('fc-r').textContent=(CARA0.RA(W)*1000).toFixed(2);
+  $('fd-p').textContent=fmt(prem(DARA0,W));$('fd-r').textContent=(DARA0.RA(W)*1000).toFixed(2);
+  $('fi-p').textContent=fmt(prem(IARA0,W));$('fi-r').textContent=(IARA0.RA(W)*1000).toFixed(2);
+}
+
+var ECLS={cara:'CARA: RA constant',dara:'DARA (and CRRA): RA falls',iara:'IARA: RA rises'};
+var EH={cara:'Utility −exp(−γY)',dara:'Utility (power family, ln Y at RA × 1000 = 0.5)',iara:'Utility Y − Y²/(2B)'};
+var eFam='dara';
+function eModels(){var r=parseFloat($('ep').value)/1000;return{cara:M.cara(r),dara:M.crra(r*2000),iara:M.quad(2000+1/r),r:r}}
+function setFam(f){
+  eFam=f;
+  ['cara','dara','iara'].forEach(function(k){$('e-'+k).setAttribute('aria-pressed',k===f?'true':'false')});
+  renderE();
+}
+function drawGamble(id,mm,W){
+  var svg=$(id),w=Math.max(260,svg.parentNode.clientWidth||400),h=236;
+  svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.style.height=h+'px';
+  var L=20,R=w-20,px=function(x){return L+(x-(W-1000))/2000*(R-L)};
+  var top=34,gap=70,bot=top+gap*2+46,s='';
+  [W-1000,W,W+1000].forEach(function(x){
+    s+='<line x1="'+px(x)+'" x2="'+px(x)+'" y1="'+(top-20)+'" y2="'+(bot-14)+'" style="stroke:var(--muted);stroke-width:1;stroke-dasharray:2 4"/>';
+  });
+  [['cara','CARA'],['dara','DARA'],['iara','IARA']].forEach(function(rw,i){
+    var y=top+i*gap,k=rw[0],p=prem(mm[k],W),cx=px(W-p),col='var(--'+k+')';
+    s+='<text class="lb" x="'+(L+8)+'" y="'+(y-14)+'" style="fill:'+col+'">'+rw[1]+'</text>';
+    s+='<line x1="'+px(W-1000)+'" x2="'+px(W+1000)+'" y1="'+y+'" y2="'+y+'" style="stroke:var(--line);stroke-width:2"/>';
+    s+='<rect x="'+cx+'" y="'+(y-7)+'" width="'+(px(W)-cx)+'" height="14" style="fill:'+col+';opacity:.3"/>';
+    s+='<circle cx="'+px(W-1000)+'" cy="'+y+'" r="5" style="fill:var(--ink)"/><circle cx="'+px(W+1000)+'" cy="'+y+'" r="5" style="fill:var(--ink)"/>';
+    if(k==='cara')s+='<circle cx="'+cx+'" cy="'+y+'" r="7.5" style="fill:'+col+';stroke:var(--surface);stroke-width:2"/>';
+    if(k==='dara')s+='<rect x="'+(cx-7)+'" y="'+(y-7)+'" width="14" height="14" style="fill:'+col+';stroke:var(--surface);stroke-width:2"/>';
+    if(k==='iara')s+='<polygon points="'+cx+','+(y-9)+' '+(cx+8.5)+','+(y+7)+' '+(cx-8.5)+','+(y+7)+'" style="fill:'+col+';stroke:var(--surface);stroke-width:2"/>';
+    var lx=Math.max(L+72,Math.min(R-72,cx));
+    s+='<text class="tk" x="'+lx+'" y="'+(y+28)+'" text-anchor="middle">CEQ '+fmt(W-p)+' · premium '+fmt(p)+'</text>';
+  });
+  s+='<text class="tk" x="'+px(W-1000)+'" y="'+bot+'" text-anchor="start">W−1000 = '+fmt(W-1000)+'</text>';
+  s+='<text class="tk" x="'+px(W)+'" y="'+bot+'" text-anchor="middle">W = '+fmt(W)+'</text>';
+  s+='<text class="tk" x="'+px(W+1000)+'" y="'+bot+'" text-anchor="end">W+1000 = '+fmt(W+1000)+'</text>';
+  s+='<text class="tk" x="'+px(W)+'" y="'+(bot+14)+'" text-anchor="middle">expected value</text>';
+  svg.innerHTML=s;
+}
+function renderE(){
+  var mm=eModels(),W=+$('ew').value,m=mm[eFam],pr=prem(m,W),ra=m.RA(W);
+  $('epo').textContent=(mm.r*1000).toFixed(2);$('ewo').textContent='CHF '+fmt(W);
+  $('eh1').textContent=EH[eFam];
+  drawGamble('e3',mm,W);
+  drawUtility('e1',m,W,{});
+  drawLines('e2',{series:[{f:function(x){return prem(m,x)},c:eFam}],x0:1200,x1:2900,W:W,xt:[1500,2000,2500],xl:'Starting wealth W (CHF)',fy:fmt});
+  $('ec0').textContent=ECLS[eFam];
+  $('ec1').textContent=(ra*1000).toFixed(3);
+  $('ec2').textContent=(ra*W).toFixed(2);
+  $('ec3').textContent='CHF '+fmt(pr);
+  $('ec4').textContent='CHF '+fmt(0.5*ra*1e6);
+}
+
+
+var CA=[[2,0.25],[4,0.75],[9,1]],CB=[[1,1/3],[6,2/3],[8,1]];
+function cF(bp,x){var v=0;for(var i=0;i<bp.length;i++){if(bp[i][0]<=x+1e-9)v=bp[i][1]}return v}
+function cI(bp,x){var t=0,px=0,pl=0;for(var i=0;i<bp.length;i++){if(x<=bp[i][0])return t+pl*(x-px);t+=pl*(bp[i][0]-px);px=bp[i][0];pl=bp[i][1]}return t+pl*(x-px)}
+var PA=[[2,0.25],[4,0.5],[9,0.25]],PB=[[1,1/3],[6,1/3],[8,1/3]];
+function mom(P,f){return P.reduce(function(a,q){return a+q[1]*f(q[0])},0)}
+var mA=mom(PA,function(x){return x}),mB=mom(PB,function(x){return x});
+var vA=mom(PA,function(x){return x*x})-mA*mA,vB=mom(PB,function(x){return x*x})-mB*mB;
+var sg=function(v){return (v<-1e-9?'\u2212':'+')+Math.abs(v).toFixed(2)};
+function drawCDF(id,fn,ymax,yt,x,step,labels){
+  var svg=$(id);
+  var r=frame(svg,{x0:0,x1:10,y0:0,y1:ymax,xt:[0,2,4,6,8,10],yt:yt,fy:function(v){return (Math.round(v*100)/100)+''},xl:'Payoff x',L:40}),s=r.s;
+  var dx=0.05;
+  for(var v=0;v<10;v+=dx){
+    var a=fn(CA,v+dx/2),b=fn(CB,v+dx/2);
+    if(Math.abs(a-b)<1e-9)continue;
+    s+='<rect x="'+r.px(v)+'" y="'+r.py(Math.max(a,b))+'" width="'+(r.px(v+dx)-r.px(v)+0.4)+'" height="'+(r.py(Math.min(a,b))-r.py(Math.max(a,b)))+'" style="fill:var('+(a<b?'--ia':'--ib')+');opacity:.22"/>';
+  }
+  function ln(bp,col,dash){
+    var d='';
+    if(step){var pl=0;d='M'+r.px(0)+' '+r.py(0);bp.forEach(function(b){d+='L'+r.px(b[0])+' '+r.py(pl)+'L'+r.px(b[0])+' '+r.py(b[1]);pl=b[1]});d+='L'+r.px(10)+' '+r.py(pl)}
+    else{[0].concat(bp.map(function(b){return b[0]}),[10]).forEach(function(v,i){d+=(i?'L':'M')+r.px(v)+' '+r.py(fn(bp,v))})}
+    return '<path d="'+d+'" fill="none" style="stroke:var('+col+');stroke-width:2.5;stroke-linejoin:round'+(dash?';stroke-dasharray:'+dash:'')+'"/>';
+  }
+  s+=ln(CA,'--ia','')+ln(CB,'--ib','6 4');
+  labels.forEach(function(l){s+='<text class="lb" x="'+r.px(l[0])+'" y="'+(r.py(l[1])+l[3])+'" text-anchor="middle" style="fill:var('+l[2]+')">'+l[4]+'</text>'});
+  s+='<line x1="'+r.px(x)+'" x2="'+r.px(x)+'" y1="'+r.T+'" y2="'+r.B+'" style="stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 4"/>';
+  s+=dot(r.px(x),r.py(fn(CA,x)),'var(--ia)',5.5)+dot(r.px(x),r.py(fn(CB,x)),'var(--ib)',5.5);
+  svg.innerHTML=s;
+}
+function renderC(){
+  var x=parseFloat($('cx').value);
+  $('cxo').textContent=x.toFixed(1);
+  drawCDF('c1',cF,1,[0,0.25,0.5,0.75,1],x,true,[[7,0.75,'--ia',-9,'A'],[3,1/3,'--ib',-9,'B']]);
+  drawCDF('c2',cI,5.5,[0,1,2,3,4,5],x,false,[[9.3,cI(CA,9.3),'--ia',-10,'A'],[9.3,cI(CB,9.3),'--ib',18,'B']]);
+  var a=cF(CA,x),b=cF(CB,x),ia=cI(CA,x),ib=cI(CB,x);
+  $('cc1').textContent=a.toFixed(2)+' vs '+b.toFixed(2);
+  $('cv1').textContent=Math.abs(a-b)<1e-9?'equal':(a<b?'A has the lower F: favours A':'B has the lower F: favours B');
+  $('cc2').textContent=ia.toFixed(2)+' vs '+ib.toFixed(2);
+  $('cv2').textContent=Math.abs(ia-ib)<1e-9?'equal':(ia<ib?'A has the smaller area: favours A':'B has the smaller area: favours B');
+  $('cc3').textContent=mA.toFixed(2)+' vs '+mB.toFixed(2);
+  $('cc4').textContent=vA.toFixed(2)+' vs '+vB.toFixed(2);
+  var lam=parseFloat($('cl').value),sa=mA-lam/2*vA,sb=mB-lam/2*vB;
+  $('clo').textContent=lam.toFixed(2);
+  $('cs1').textContent=sa.toFixed(2);$('cs2').textContent=sb.toFixed(2);
+  $('cs3').textContent=Math.abs(sa-sb)<0.005?'Indifferent':(sa>sb?'A':'B');
+}
+function buildTable(){
+  var h='<tr><th>x</th><th>F<sub>A</sub></th><th>F<sub>B</sub></th><th>F<sub>B</sub> \u2212 F<sub>A</sub></th><th>Area F<sub>A</sub></th><th>Area F<sub>B</sub></th><th>D(x)</th></tr>';
+  for(var x=1;x<=9;x++){
+    h+='<tr><td>'+x+'</td><td>'+cF(CA,x).toFixed(2)+'</td><td>'+cF(CB,x).toFixed(2)+'</td><td>'+sg(cF(CB,x)-cF(CA,x))+'</td><td>'+cI(CA,x).toFixed(2)+'</td><td>'+cI(CB,x).toFixed(2)+'</td><td>'+sg(cI(CB,x)-cI(CA,x))+'</td></tr>';
+  }
+  $('ctab').innerHTML=h;
+  var la=mom(PA,Math.log),lb=mom(PB,Math.log),qa=mom(PA,function(x){return x-0.01*x*x}),qb=mom(PB,function(x){return x-0.01*x*x});
+  $('ci1').textContent=la.toFixed(3)+' vs '+lb.toFixed(3);
+  $('ci2').textContent=qa.toFixed(3)+' vs '+qb.toFixed(3);
+  var p1=$('cp1'),p2=$('cp2');
+  p1.textContent=la>lb?'Picks A':'Picks B';p1.className='pill '+(la>lb?'ok':'bad');
+  p2.textContent=qa>qb?'Picks A':'Picks B';p2.className='pill '+(qa>qb?'ok':'bad');
+}
+
+var L1=[[0,.25],[2,.25],[4,.25],[6,.25]],L2=[[0.1,1/3],[3,1/3],[5.9,1/3]];
+function sf(L,c){return L.reduce(function(a,q){return a+q[1]*Math.max(c-q[0],0)},0)}
+function varOf(L){var m=mom(L,function(x){return x});return mom(L,function(x){return x*x})-m*m}
+var V1=varOf(L1),V2=varOf(L2),DPOS=0,DNEG=0;
+(function(){var n=1200,dc=6/n;for(var i=0;i<n;i++){var c=(i+0.5)*dc,d=sf(L2,c)-sf(L1,c);if(d>0)DPOS+=d*dc;else DNEG-=d*dc}})();
+function agg(list){var m={};list.forEach(function(q){var k=q[0].toFixed(6);m[k]=(m[k]||0)+q[1]});return Object.keys(m).map(function(k){return[parseFloat(k),m[k]]})}
+function setup(id,h){var svg=$(id),w=Math.max(260,svg.parentNode.clientWidth||400);svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.style.height=h+'px';return{svg:svg,w:w}}
+function renderS(){
+  var sv=parseFloat($('sx').value);$('sxo').textContent=sv.toFixed(2);
+  var A=[[2,.5],[4,.5]],B=agg([[2-sv,.25],[2+sv,.25],[4-sv,.25],[4+sv,.25]]);
+  var o=setup('g1',262),L=20,R=o.w-20,px=function(x){return L+x/6*(R-L)},s='';
+  function strip(P,base,col,label,ly){
+    s+='<line class="ax" x1="'+L+'" x2="'+R+'" y1="'+base+'" y2="'+base+'"/>';
+    P.forEach(function(q){var y=base-q[1]*150;s+='<line x1="'+px(q[0])+'" x2="'+px(q[0])+'" y1="'+base+'" y2="'+y+'" style="stroke:var('+col+');stroke-width:2.5"/>'+dot(px(q[0]),y,'var('+col+')',5)});
+    s+='<text class="lb" x="'+L+'" y="'+ly+'" style="fill:var('+col+')">'+label+'</text>';
+  }
+  s+='<line x1="'+px(3)+'" x2="'+px(3)+'" y1="24" y2="236" style="stroke:var(--muted);stroke-width:1;stroke-dasharray:2 4"/><text class="tk" x="'+px(3)+'" y="16" text-anchor="middle">mean 3</text>';
+  strip(A,112,'--ia','A',34);strip(B,236,'--ib','B = A + ε',158);
+  [0,1,2,3,4,5,6].forEach(function(v){s+='<text class="tk" x="'+px(v)+'" y="254" text-anchor="middle">'+v+'</text>'});
+  o.svg.innerHTML=s;
+  var va=varOf(A),vb=varOf(B);
+  $('sv1').textContent=va.toFixed(2);$('sv2').textContent=(sv*sv).toFixed(2);$('sv3').textContent=vb.toFixed(2);$('sv4').textContent=(va+sv*sv).toFixed(2);
+}
+var Uk=function(y){return y<=3?2*y:3+y};
+function frac(q){return Math.abs(q-0.25)<1e-9?'¼':'⅓'}
+function renderP4(){
+  var o,r,t,i;
+  r=frame($('g4'),{x0:0,x1:7,y0:0,y1:10,xt:[0,1,2,3,4,5,6,7],yt:[0,2,4,6,8,10],xl:'Wealth Y',L:40,h:280});
+  t=r.s;
+  t+='<line x1="'+r.px(3)+'" y1="'+r.py(6)+'" x2="'+r.px(5)+'" y2="'+r.py(10)+'" style="stroke:var(--muted);stroke-width:1.5;stroke-dasharray:4 4"/>';
+  t+='<path d="M'+r.px(0)+' '+r.py(0)+'L'+r.px(3)+' '+r.py(6)+'L'+r.px(7)+' '+r.py(10)+'" fill="none" style="stroke:var(--cara);stroke-width:2.5;stroke-linejoin:round"/>';
+  [[L1,'--ia'],[L2,'--ib']].forEach(function(z){z[0].forEach(function(q){t+=dot(r.px(q[0]),r.py(Uk(q[0])),'var('+z[1]+')',4.5)})});
+  t+='<text class="lb" x="'+(r.px(1.5)-8)+'" y="'+(r.py(3)-6)+'" text-anchor="end" style="fill:var(--cara)">slope 2</text>';
+  t+='<text class="lb" x="'+(r.px(5)+6)+'" y="'+(r.py(8)+16)+'" style="fill:var(--cara)">slope 1</text>';
+  t+='<text class="tk" x="'+(r.px(3)-8)+'" y="'+(r.py(6)-10)+'" text-anchor="end">kink at Y = 3, U = 6</text>';
+  $('g4').innerHTML=t;
+
+  o=setup('g5',262);var L=20,R=o.w-20,px=function(x){return L+x/6*(R-L)};t='';
+  t+='<line x1="'+px(3)+'" x2="'+px(3)+'" y1="20" y2="232" style="stroke:var(--muted);stroke-width:1;stroke-dasharray:2 4"/><text class="tk" x="'+px(3)+'" y="14" text-anchor="middle">mean 3</text>';
+  [[L1,108,'--ia','L1',30],[L2,232,'--ib','L2',138]].forEach(function(z){
+    t+='<line class="ax" x1="'+L+'" x2="'+R+'" y1="'+z[1]+'" y2="'+z[1]+'"/>';
+    z[0].forEach(function(q){var y=z[1]-q[1]*240;t+='<line x1="'+px(q[0])+'" x2="'+px(q[0])+'" y1="'+z[1]+'" y2="'+y+'" style="stroke:var('+z[2]+');stroke-width:2.5"/>'+dot(px(q[0]),y,'var('+z[2]+')',5)});
+    t+='<text class="lb" x="'+L+'" y="'+z[4]+'" style="fill:var('+z[2]+')">'+z[3]+'</text>';
+  });
+  [0,1,2,3,4,5,6].forEach(function(v){t+='<text class="tk" x="'+px(v)+'" y="254" text-anchor="middle">'+v+'</text>'});
+  o.svg.innerHTML=t;
+  var e1=mom(L1,function(x){return x*x}),e2=mom(L2,function(x){return x*x});
+  $('m1').textContent=mom(L1,function(x){return x}).toFixed(2)+' · '+mom(L2,function(x){return x}).toFixed(2);
+  $('m2').textContent=e1.toFixed(2)+' · '+e2.toFixed(2);
+  $('m3').textContent=V1.toFixed(2)+' · '+V2.toFixed(2);
+
+  function tab(id,L,name,col){
+    var h='<caption style="color:var('+col+')">'+name+'</caption><tr><th>Outcome Y</th><th>Probability</th><th>U(Y)</th><th>Prob × U(Y)</th></tr>',sum=0;
+    L.forEach(function(q){var u=Uk(q[0]);sum+=q[1]*u;h+='<tr><td>'+q[0]+'</td><td>'+frac(q[1])+'</td><td>'+u.toFixed(1)+'</td><td>'+(q[1]*u).toFixed(3)+'</td></tr>'});
+    h+='<tr><td colspan="3"><strong>E[U] for '+name+'</strong></td><td><strong>'+sum.toFixed(3)+'</strong></td></tr>';
+    $(id).innerHTML=h;return sum;
+  }
+  var u1=tab('u1',L1,'L1','--ia'),u2=tab('u2',L2,'L2','--ib');
+  $('uc1').textContent=u1.toFixed(3);$('uc2').textContent=u2.toFixed(3);
+  $('uc3').innerHTML=u2>u1?'<span class="pill" style="color:var(--ib)">L2, the higher-variance lottery</span>':'<span class="pill" style="color:var(--ia)">L1</span>';
+
+  var o6=setup('g6',216),R6=o6.w-24,L6=24,x6=function(x){return L6+x/6*(R6-L6)},q='';
+  q+='<line x1="'+x6(3)+'" x2="'+x6(3)+'" y1="22" y2="176" style="stroke:var(--muted);stroke-width:1;stroke-dasharray:2 4"/><text class="tk" x="'+x6(3)+'" y="14" text-anchor="middle">3</text>';
+  [[L1,72,'--ia','L1'],[L2,148,'--ib','L2']].forEach(function(z){
+    var y=z[1],col='var('+z[2]+')';
+    q+='<text class="lb" x="'+L6+'" y="'+(y-38)+'" style="fill:'+col+'">'+z[3]+'</text>';
+    q+='<line class="ax" x1="'+L6+'" x2="'+R6+'" y1="'+y+'" y2="'+y+'"/>';
+    z[0].forEach(function(p){
+      if(p[0]<3){
+        q+='<rect x="'+x6(p[0])+'" y="'+(y-6)+'" width="'+(x6(3)-x6(p[0]))+'" height="12" style="fill:'+col+';opacity:.35"/>';
+        q+='<text class="tk" x="'+((x6(p[0])+x6(3))/2)+'" y="'+(y-14)+'" text-anchor="middle">fall of '+(Math.round((3-p[0])*10)/10)+'</text>';
+      }
+      q+=dot(x6(p[0]),y,col,5.5);
+    });
+  });
+  [0,1,2,3,4,5,6].forEach(function(v){q+='<text class="tk" x="'+x6(v)+'" y="200" text-anchor="middle">'+v+'</text>'});
+  o6.svg.innerHTML=q;
+  $('in1').textContent='L1 '+V1.toFixed(2)+' · L2 '+V2.toFixed(2);
+  $('in2').textContent='L1 '+sf(L1,3).toFixed(2)+' · L2 '+sf(L2,3).toFixed(2);
+}
+/* ---- Problem Set 4: portfolio choice ---- */
+var p5mode='a';
+function r4(v){return Math.round(v*10000)/10000}
+function p5state(){
+  var b=parseFloat($('p5b').value),p1=parseFloat($('p5p').value);
+  var e2=Math.exp(2*b),p3=p1*e2,p2=1-p1-p3;
+  var Ez=p1+2*p2+3*p3;
+  var Ee=p1*Math.exp(-b)+p2*Math.exp(-2*b)+p3*Math.exp(-3*b);
+  var Rs=-Math.log(Ee)/b;
+  return{b:b,p1:p1,p2:p2,p3:p3,Ez:Ez,Rs:Rs,pi:Ez-Rs,lim:1/(1+e2)};
+}
+function p5sync(){
+  var b=parseFloat($('p5b').value),lim=1/(1+Math.exp(2*b)),mx=Math.floor(lim*100-1e-9)/100,s=$('p5p');
+  s.max=mx.toFixed(2);
+  if(parseFloat(s.value)>mx)s.value=mx.toFixed(2);
+}
+function drawP5a(st){
+  var o=setup('p5l',372),L=16,R=o.w-16,x0=0.9,x1=3.1,ay=150;
+  var px=function(x){return L+(x-x0)/(x1-x0)*(R-L)},s='';
+  var X2=px(2),XR=px(st.Rs),XE=px(st.Ez);
+  var Ez4=r4(st.Ez),pi4=r4(st.pi),Rs4=r4(st.Rs);
+  /* shaded risk premium band, from the axis down to the premium bracket */
+  s+='<rect x="'+XR+'" y="'+ay+'" width="'+(XE-XR)+'" height="162" style="fill:var(--cara);opacity:.16"/>';
+  /* axis and tick labels */
+  s+='<line class="ax" x1="'+L+'" x2="'+R+'" y1="'+ay+'" y2="'+ay+'"/>';
+  /* payoffs and probabilities */
+  [[1,st.p1,'p<tspan dy="3" font-size="9">1</tspan>'],[2,st.p2,'p<tspan dy="3" font-size="9">2</tspan>'],[3,st.p3,'p<tspan dy="3" font-size="9">3</tspan>']].forEach(function(q){
+    var x=px(q[0]),y=ay-q[1]*118;
+    s+='<line x1="'+x+'" x2="'+x+'" y1="'+ay+'" y2="'+y+'" style="stroke:var(--muted);stroke-width:2.5"/>';
+    s+=dot(x,y,'var(--ink)',5);
+    s+='<text class="tk" x="'+x+'" y="'+(y-11)+'" text-anchor="middle">'+q[2]+'<tspan dy="-3"> = '+q[1].toFixed(2)+'</tspan></text>';
+    s+='<text class="tk" x="'+x+'" y="'+(ay+32)+'" text-anchor="middle">z = '+q[0]+'</text>';
+  });
+  /* guide lines from the three markers */
+  [[X2,324],[XR,342],[XE,324]].forEach(function(g){
+    s+='<line x1="'+g[0]+'" x2="'+g[0]+'" y1="'+ay+'" y2="'+g[1]+'" style="stroke:var(--muted);stroke-width:1;stroke-dasharray:2 4"/>';
+  });
+  /* gap brackets */
+  function bracket(xa,xb,y,col,w){
+    return '<line x1="'+xa+'" x2="'+xb+'" y1="'+y+'" y2="'+y+'" style="stroke:'+col+';stroke-width:'+w+'"/>'+
+      '<line x1="'+xa+'" x2="'+xa+'" y1="'+(y-6)+'" y2="'+(y+6)+'" style="stroke:'+col+';stroke-width:'+w+'"/>'+
+      '<line x1="'+xb+'" x2="'+xb+'" y1="'+(y-6)+'" y2="'+(y+6)+'" style="stroke:'+col+';stroke-width:'+w+'"/>';
+  }
+  function note(xr,y,l1,l2,l3,col,bold){
+    var t='<text class="'+(bold?'lb':'tk')+'" x="'+xr+'" y="'+(y-3)+'" text-anchor="end" style="fill:'+col+(bold?';font-size:13px':'')+'">'+l1+'</text>';
+    t+='<text class="'+(bold?'lb':'tk')+'" x="'+xr+'" y="'+(y+12)+'" text-anchor="end" style="fill:'+col+(bold?';font-size:13px':'')+'">'+l2+'</text>';
+    if(l3)t+='<text class="tk" x="'+xr+'" y="'+(y+26)+'" text-anchor="end" style="fill:'+col+';font-style:italic">'+l3+'</text>';
+    return t;
+  }
+  s+=bracket(X2,XE,212,'var(--muted)',1.5)+note(X2-10,206,'E[z] − 2 = '+(r4(Ez4-2)).toFixed(4),'expected excess return','not the risk premium','var(--muted)',false);
+  s+=bracket(X2,XR,262,'var(--muted)',1.5)+note(X2-10,256,'Rs − 2 = '+(r4(Rs4-2)).toFixed(4),(o.w<360?'gain over riskless':'gain over the riskless asset'),'not the risk premium','var(--muted)',false);
+  s+=bracket(XR,XE,308,'var(--cara)',4)+note(XR-12,302,'Risk premium','E[z] − Rs = '+pi4.toFixed(4),'','var(--cara)',true);
+  /* markers on the axis */
+  s+='<polygon points="'+X2+','+(ay-8)+' '+(X2+8)+','+ay+' '+X2+','+(ay+8)+' '+(X2-8)+','+ay+'" style="fill:var(--gold);stroke:var(--surface);stroke-width:1.5"/>';
+  s+=dot(XR,ay,'var(--ok)',6.5)+dot(XE,ay,'var(--dara)',6.5);
+  /* marker names at the bottom of the guide lines */
+  s+='<text class="lb" x="'+(X2-6)+'" y="340" text-anchor="end" style="fill:var(--gold)">riskless 2</text>';
+  s+='<text class="lb" x="'+(XE+6)+'" y="340" text-anchor="start" style="fill:var(--dara)">E[z] = '+Ez4.toFixed(4)+'</text>';
+  s+='<text class="lb" x="'+XR+'" y="358" text-anchor="middle" style="fill:var(--ok)">Rs = '+Rs4.toFixed(4)+'</text>';
+  o.svg.innerHTML=s;
+  /* readouts */
+  $('p5bo').textContent=st.b.toFixed(2);$('p5po').textContent=st.p1.toFixed(2);$('p5lim').textContent=st.lim.toFixed(3);
+  $('p5c0').textContent=st.p1.toFixed(2)+' · '+st.p2.toFixed(2)+' · '+st.p3.toFixed(2);
+  $('p5c1').textContent=Ez4.toFixed(4);$('p5c2').textContent=Rs4.toFixed(4);$('p5c3').textContent=pi4.toFixed(4);
+  $('p5c4').textContent=r4(Ez4-2).toFixed(4);$('p5c5').textContent=r4(Rs4-2).toFixed(4);
+  var ex4=r4(Ez4-2),g4=r4(Rs4-2),eq=Math.abs(r4(pi4+g4)-ex4)<1e-9?' = ':' ≈ ';
+  $('p5id').textContent='The expected excess return splits into the premium and the gain over the riskless asset: E[z] − 2 = (E[z] − Rs) + (Rs − 2), that is '+ex4.toFixed(4)+eq+pi4.toFixed(4)+' + '+g4.toFixed(4)+'. Only the first part pays for the risk.'+(eq===' = '?'':' The last digit of a sum can differ from the total because each figure is rounded.');
+}
+function p5amt(k,st,y){
+  var c=st.b/(1+2*st.b),g=2*st.b;
+  if(k==='cara')return Math.log(st.p3/st.p1)/(2*st.b);
+  if(k==='crra')return 2*y*Math.tanh(st.b/g);
+  return Math.max(0,(1-2*c*y)*Math.tanh(st.b)/c);
+}
+function drawP5b(st){
+  var Y=parseFloat($('p5y').value),share=p5mode==='s';
+  var fy=function(k){return function(y){var a=p5amt(k,st,y);return share?a/y:a}};
+  $('p5yo').textContent=Y.toFixed(2);
+  $('p5wh').textContent=share?'Share of wealth in the risky asset, a*/Y':'Amount in the risky asset, a*';
+  drawLines('p5w',{
+    series:[
+      {f:fy('cara'),c:'cara',label:'CARA'},
+      {f:fy('crra'),c:'dara',dash:'7 5',label:'CRRA'},
+      {f:fy('quad'),c:'iara',dash:'1 6',w:3.5,label:'IARA'}
+    ],
+    x0:0.5,x1:3,W:Y,xt:[0.5,1,1.5,2,2.5,3],xl:'Initial wealth Y',
+    fx:function(v){return (Math.round(v*10)/10)+''},
+    fy:function(v){return (Math.round(v*100)/100)+''},
+    calib:1,calibLabel:'Y = 1, same RA',calibTop:true
+  });
+  var c=st.b/(1+2*st.b),zero=1/(2*c);
+  var vals=['cara','crra','quad'].map(function(k){return fy(k)(Y)});
+  var names=['CARA: a*'+(share?'/Y':''),'CRRA: a*'+(share?'/Y':''),'Quadratic (IARA): a*'+(share?'/Y':'')];
+  var tips=share
+    ?['falls as 1/Y, because the amount is fixed','constant: the share ignores wealth','falls, and is 0 from Y = '+zero.toFixed(2)]
+    :['does not change with Y','grows in proportion to Y','falls, and is 0 from Y = '+zero.toFixed(2)];
+  for(var i=0;i<3;i++){$('p5n'+(i+1)).textContent=names[i];$('p5k'+(i+1)).textContent=vals[i].toFixed(3);$('p5t'+(i+1)).textContent=tips[i]}
+}
+function p5br(xa,xb,y,col,w){
+  return '<line x1="'+xa+'" x2="'+xb+'" y1="'+y+'" y2="'+y+'" style="stroke:'+col+';stroke-width:'+w+'"/>'+
+    '<line x1="'+xa+'" x2="'+xa+'" y1="'+(y-6)+'" y2="'+(y+6)+'" style="stroke:'+col+';stroke-width:'+w+'"/>'+
+    '<line x1="'+xb+'" x2="'+xb+'" y1="'+(y-6)+'" y2="'+(y+6)+'" style="stroke:'+col+';stroke-width:'+w+'"/>';
+}
+function p5nt(xr,y,l1,l2,l3,col,bold){
+  var c=bold?'lb':'tk',st='style="fill:'+col+(bold?';font-size:13px':'')+'"';
+  var t='<text class="'+c+'" x="'+xr+'" y="'+(y-3)+'" text-anchor="end" '+st+'>'+l1+'</text>';
+  t+='<text class="'+c+'" x="'+xr+'" y="'+(y+12)+'" text-anchor="end" '+st+'>'+l2+'</text>';
+  if(l3)t+='<text class="tk" x="'+xr+'" y="'+(y+26)+'" text-anchor="end" style="fill:'+col+';font-style:italic">'+l3+'</text>';
+  return t;
+}
+function drawP5u(st){
+  var b=st.b,u=function(R){return 1-Math.exp(-b*R)};
+  var x0=0.8,x1=3.2,sp=u(x1)-u(x0);
+  var Eu=st.p1*u(1)+st.p2*u(2)+st.p3*u(3),Ez=st.Ez,Rs=st.Rs,uEz=u(Ez);
+  var svg=$('p5u');
+  var r=frame(svg,{x0:x0,x1:x1,y0:u(x0)-0.5*sp,y1:u(x1)+0.1*sp,xt:[1,2,3],xl:'Final return R',L:16,h:380}),s=r.s;
+  var X2=r.px(2),XR=r.px(Rs),XE=r.px(Ez),yE=r.py(Eu),B=r.B;
+  var Ez4=r4(st.Ez),Rs4=r4(st.Rs),pi4=r4(st.pi);
+  /* shaded premium band under the expected-utility height */
+  s+='<rect x="'+XR+'" y="'+yE+'" width="'+(XE-XR)+'" height="'+(B-yE)+'" style="fill:var(--cara);opacity:.16"/>';
+  /* utility curve and the lottery line */
+  var pts=[];for(var i=0;i<=100;i++){var x=x0+(x1-x0)*i/100;pts.push([x,u(x)])}
+  s+=pathOf(pts,r,'stroke:var(--cara);stroke-width:2.5;');
+  s+='<polyline points="'+[1,2,3].map(function(z){return r.px(z)+','+r.py(u(z))}).join(' ')+'" fill="none" style="stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 4"/>';
+  s+='<text class="lb" x="'+(r.px(x1)-4)+'" y="'+(r.py(u(x1))-10)+'" text-anchor="end" style="fill:var(--cara)">u(R)</text>';
+  /* sideways reading line, drops to the axis */
+  s+='<line x1="'+r.L+'" x2="'+XR+'" y1="'+yE+'" y2="'+yE+'" style="stroke:var(--ok);stroke-width:1.5;stroke-dasharray:5 4"/>';
+  [[XR,'var(--ok)'],[XE,'var(--dara)']].forEach(function(g){s+='<line x1="'+g[0]+'" x2="'+g[0]+'" y1="'+yE+'" y2="'+B+'" style="stroke:'+g[1]+';stroke-width:1.5;stroke-dasharray:2 4"/>'});
+  s+='<line x1="'+X2+'" x2="'+X2+'" y1="'+r.py(u(2))+'" y2="'+B+'" style="stroke:var(--gold);stroke-width:1.5;stroke-dasharray:2 4"/>';
+  /* the premium as a horizontal gap at the height of E[U] */
+  s+='<line x1="'+XR+'" x2="'+XE+'" y1="'+yE+'" y2="'+yE+'" style="stroke:var(--cara);stroke-width:4"/>';
+  /* the same loss in utility */
+  s+='<line x1="'+XE+'" x2="'+XE+'" y1="'+yE+'" y2="'+r.py(uEz)+'" style="stroke:var(--muted);stroke-width:1.5;stroke-dasharray:3 3"/>';
+  s+='<circle cx="'+XE+'" cy="'+r.py(uEz)+'" r="4" style="fill:var(--surface);stroke:var(--muted);stroke-width:2"/>';
+  /* payoffs on the curve */
+  [1,2,3].forEach(function(z){s+=dot(r.px(z),r.py(u(z)),'var(--cara)',4.5)});
+  /* expected utility point and certainty equivalent */
+  s+=dot(XR,yE,'var(--ok)',5.5)+dot(XE,yE,'var(--dara)',5.5);
+  s+='<text class="lb" x="'+(XR-9)+'" y="'+(yE-10)+'" text-anchor="end" style="fill:var(--ok)">CEQ</text>';
+  s+='<text class="lb" x="'+(XE+10)+'" y="'+(yE+17)+'" text-anchor="start" style="fill:var(--dara)">E[U]</text>';
+  /* markers on the axis and their names */
+  s+='<polygon points="'+X2+','+(B-8)+' '+(X2+8)+','+B+' '+X2+','+(B+8)+' '+(X2-8)+','+B+'" style="fill:var(--gold);stroke:var(--surface);stroke-width:1.5"/>';
+  s+=dot(XR,B,'var(--ok)',5.5)+dot(XE,B,'var(--dara)',5.5);
+  s+='<text class="lb" x="'+XR+'" y="'+(B+16)+'" text-anchor="middle" style="fill:var(--ok)">Rs</text>';
+  s+='<text class="lb" x="'+XE+'" y="'+(B+16)+'" text-anchor="middle" style="fill:var(--dara)">E[z]</text>';
+  /* gap brackets above the axis, same labels as the return line */
+  s+=p5br(X2,XR,B-74,'var(--muted)',1.5)+p5nt(X2-10,B-80,'Rs − 2 = '+r4(Rs4-2).toFixed(4),(r.w<360?'gain over riskless':'gain over the riskless asset'),'not the risk premium','var(--muted)',false);
+  s+=p5br(XR,XE,B-28,'var(--cara)',4)+p5nt(XR-12,B-34,'Risk premium','E[z] − Rs = '+pi4.toFixed(4),'','var(--cara)',true);
+  svg.innerHTML=s;
+}
+function renderP5(){var st=p5state();drawP5a(st);drawP5u(st);drawP5b(st)}
+
+function all(){renderA();renderB();renderE();renderC();renderS();renderP4();renderP5()}
+$('a-ln').addEventListener('click',function(){aFam='ln';$('a-ln').setAttribute('aria-pressed','true');$('a-inv').setAttribute('aria-pressed','false');renderA()});
+$('a-inv').addEventListener('click',function(){aFam='inv';$('a-inv').setAttribute('aria-pressed','true');$('a-ln').setAttribute('aria-pressed','false');renderA()});
+$('aw').addEventListener('input',renderA);
+$('asnap').addEventListener('click',function(){$('aw').value=aFam==='ln'?1250:2000;renderA()});
+$('bw').addEventListener('input',renderB);
+$('ew').addEventListener('input',renderE);
+$('ep').addEventListener('input',renderE);
+$('cx').addEventListener('input',renderC);
+$('cl').addEventListener('input',renderC);
+$('sx').addEventListener('input',renderS);
+['cara','dara','iara'].forEach(function(k){$('e-'+k).addEventListener('click',function(){setFam(k)})});
+$('p5b').addEventListener('input',function(){p5sync();renderP5()});
+$('p5p').addEventListener('input',renderP5);
+$('p5y').addEventListener('input',function(){drawP5b(p5state())});
+$('p5m-a').addEventListener('click',function(){p5mode='a';$('p5m-a').setAttribute('aria-pressed','true');$('p5m-s').setAttribute('aria-pressed','false');drawP5b(p5state())});
+$('p5m-s').addEventListener('click',function(){p5mode='s';$('p5m-s').setAttribute('aria-pressed','true');$('p5m-a').setAttribute('aria-pressed','false');drawP5b(p5state())});
+var raf;function redraw(){cancelAnimationFrame(raf);raf=requestAnimationFrame(all)}
+if(window.ResizeObserver){var ro=new ResizeObserver(redraw);document.querySelectorAll('.chart').forEach(function(e){ro.observe(e)})}
+else window.addEventListener('resize',redraw);
+buildTable();setFam('dara');renderA();renderB();renderC();renderS();renderP4();p5sync();renderP5();
+})();
+</script>
+
+</body></html>
